@@ -82,6 +82,7 @@ const Categories = (props) => {
         </DialogContent>
       </Dialog>
       <DisplayTable
+      category="business"
         get={useGetBusinessCategoryQuery}
         delete={useDeleteCategoryMutation}
         update={useUpdateCategoryMutation}

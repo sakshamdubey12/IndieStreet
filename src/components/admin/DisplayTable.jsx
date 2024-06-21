@@ -25,8 +25,10 @@ import {
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { useToast } from "../ui/use-toast";
+import { Textarea } from "../ui/textarea";
 
 const DisplayTable = ({
+  category,
   get,
   delete: deleteCategoryHook,
   update,
@@ -36,6 +38,9 @@ const DisplayTable = ({
   const [selectedCategoryId, setSelectedCategoryId] = useState(null);
   const [currentCategoryName, setCurrentCategoryName] = useState("");
   const [newCategoryName, setNewCategoryName] = useState("");
+  const [currentCategoryDescription, setCurrentCategoryDescription] =
+    useState("");
+  const [newCategoryDescription, setNewCategoryDescription] = useState("");
   const [dialogType, setDialogType] = useState("");
   const { toast } = useToast();
 
@@ -51,10 +56,16 @@ const DisplayTable = ({
     }
   }, [data]);
 
-  const openDialog = (type, categoryId, categoryName = "") => {
+  const openDialog = (
+    type,
+    categoryId,
+    categoryName = "",
+    categoryDescription = ""
+  ) => {
     setSelectedCategoryId(categoryId);
     setDialogType(type);
     setCurrentCategoryName(categoryName);
+    setCurrentCategoryDescription(categoryDescription);
   };
 
   const handleUpdateCategory = async () => {
@@ -64,6 +75,7 @@ const DisplayTable = ({
       await updateCategory({
         categoryId: selectedCategoryId,
         categoryName: newCategoryName,
+        description: newCategoryDescription,
       }).unwrap();
       toast({
         title: "Success",
@@ -71,7 +83,7 @@ const DisplayTable = ({
         duration: 3000,
       });
       refetch();
-      setDialogType("");
+      closeDialog();
     } catch (error) {
       console.error("Failed to update category:", error);
       toast({
@@ -93,7 +105,7 @@ const DisplayTable = ({
         duration: 3000,
       });
       refetch();
-      setDialogType("");
+      closeDialog();
     } catch (error) {
       console.error("Failed to mark category inactive:", error);
       toast({
@@ -115,7 +127,7 @@ const DisplayTable = ({
         duration: 3000,
       });
       refetch();
-      setDialogType("");
+      closeDialog();
     } catch (error) {
       console.error("Failed to delete category:", error);
       toast({
@@ -131,18 +143,23 @@ const DisplayTable = ({
     setSelectedCategoryId(null);
     setCurrentCategoryName("");
     setNewCategoryName("");
+    setCurrentCategoryDescription("");
+    setNewCategoryDescription("");
   };
 
   if (error) {
     return <p>Error loading data</p>;
   }
-
+  console.log(businessCategory);
   return (
     <>
       <Table className="border rounded">
         <TableHeader>
           <TableRow>
             <TableHead>Category Name</TableHead>
+            {category === "product" && (
+              <TableHead>Category Description</TableHead>
+            )}
             <TableHead>Active Status</TableHead>
             <TableHead>Created At</TableHead>
             <TableHead>Updated At</TableHead>
@@ -150,19 +167,22 @@ const DisplayTable = ({
           </TableRow>
         </TableHeader>
         <TableBody>
-          {businessCategory.map((category) => (
-            <TableRow key={category._id}>
-              <TableCell>{category.categoryName}</TableCell>
-              <TableCell>{category.isActive ? "Active" : "Inactive"}</TableCell>
+          {businessCategory.map((cat) => (
+            <TableRow key={cat._id}>
+              <TableCell>{cat.categoryName}</TableCell>
+              {category === "product" && (
+                <TableCell>{cat.description}</TableCell>
+              )}
+              <TableCell>{cat.isActive ? "Active" : "Inactive"}</TableCell>
               <TableCell>
-                {new Date(category.createdAt).toLocaleDateString("en-GB", {
+                {new Date(cat.createdAt).toLocaleDateString("en-GB", {
                   day: "numeric",
                   month: "long",
                   year: "numeric",
                 })}
               </TableCell>
               <TableCell>
-                {new Date(category.updatedAt).toLocaleDateString("en-GB", {
+                {new Date(cat.updatedAt).toLocaleDateString("en-GB", {
                   day: "numeric",
                   month: "long",
                   year: "numeric",
@@ -178,20 +198,21 @@ const DisplayTable = ({
                       onClick={() =>
                         openDialog(
                           "update",
-                          category._id,
-                          category.categoryName
+                          cat._id,
+                          cat.categoryName,
+                          cat.description
                         )
                       }
                     >
                       Update
                     </DropdownMenuItem>
                     <DropdownMenuItem
-                      onClick={() => openDialog("inactive", category._id)}
+                      onClick={() => openDialog("inactive", cat._id)}
                     >
                       Inactive
                     </DropdownMenuItem>
                     <DropdownMenuItem
-                      onClick={() => openDialog("delete", category._id)}
+                      onClick={() => openDialog("delete", cat._id)}
                     >
                       Delete
                     </DropdownMenuItem>
@@ -221,6 +242,26 @@ const DisplayTable = ({
               onChange={(e) => setNewCategoryName(e.target.value)}
             />
           </div>
+          {category === "product" && (
+            <>
+              <div>
+                <label className=" text-sm">Current Category Description</label>
+                <Textarea
+                  placeholder="Current Description"
+                  value={currentCategoryDescription}
+                  disabled
+                />
+              </div>
+              <div>
+                <label className=" text-sm">New Category Description</label>
+                <Textarea
+                  placeholder="Enter new category description"
+                  value={newCategoryDescription}
+                  onChange={(e) => setNewCategoryDescription(e.target.value)}
+                />
+              </div>
+            </>
+          )}
           <DialogFooter>
             <Button className=" bg-white text-black" onClick={closeDialog}>
               Cancel
