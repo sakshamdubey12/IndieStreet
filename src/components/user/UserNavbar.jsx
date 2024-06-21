@@ -28,7 +28,6 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { Button } from "../ui/button";
-import { FaHamburger } from "react-icons/fa";
 import {
   NavigationMenu,
   NavigationMenuContent,
@@ -40,6 +39,7 @@ import {
   NavigationMenuViewport,
 } from "@/components/ui/navigation-menu";
 import { useGetProductCategoryQuery } from "@/redux/slices/ProductCategorySlice";
+import Image from "next/image";
 
 const UserNavbar = () => {
   const [lastScroll, setLastScroll] = useState(0);
@@ -71,44 +71,14 @@ const UserNavbar = () => {
     window.innerWidth > 1024 ? setToggle(true) : setToggle(false);
   };
 
+
+  
   const handleLogout = () => {
     logout();
     setIsAuth(false);
     router.push("/");
   };
 
-  useEffect(() => {
-    // const handleResize = () => {
-    //   const width = containerRef.current.offsetWidth;
-    //   console.log(width);
-    //   const items = Array.from(containerRef.current.children).slice(0, -1);
-    //   let totalWidth = 0;
-    //   const visible = [];
-    //   const hidden = [];
-    //   console.log(items.offsetWidth);
-
-    //   items.forEach((items, index) => {
-    //     totalWidth += items.offsetWidth;
-    //     totalWidth <= width
-    //       ? visible.push(data.data[index])
-    //       : hidden.push(data.data[index]);
-    //   });
-    //   setVisibleCategories(visible);
-    //   setHiddenCategories(hidden);
-    // };
-    // handleResize();
-    // window.addEventListener("resize", handleResize);
-
-    // return () => {
-    //   window.removeEventListener("resize", handleResize);
-    // };
-
-    window.addEventListener('resize',()=>{
-      console.log(containerRef.current.offsetWidth);
-    })
-  }, []);
-
-  console.log(data?.data);
   return (
     <header className="shadow-[0_0_5px_rgba(78,27,97,0.50)] sticky top-0 z-50">
       <nav>
@@ -134,12 +104,12 @@ const UserNavbar = () => {
               </div>
               <ul
                 ref={containerRef}
-                className="flex items-center font-medium ml-4 h-16 bg-red-400 w-fit"
+                className="flex items-center font-medium ml-4 h-16"
               >
                 {data?.data?.map((category) => (
                   <li
                     key={category._id}
-                    className="h-16 w-max relative after:absolute after:rounded-t-xl after:w-full after:h-1 after:bg-[#4E1B61] after:-bottom-0.5 after:left-0 after:opacity-0 hover:after:opacity-100 after:ease-in-out after:duration-300 after:transition-all mx-1"
+                    className="h-16 w-max relative after:absolute after:rounded-t-xl after:w-full after:h-1 after:bg-[#4E1B61] after:-bottom-0.5 after:left-0 after:opacity-0 hover:after:opacity-100 after:ease-in-out after:duration-300 after:transition-all"
                   >
                     <Link
                       href={category._id}
@@ -152,19 +122,31 @@ const UserNavbar = () => {
                 <li className="h-16">
                   <NavigationMenu>
                     <NavigationMenuList>
-                      <NavigationMenuItem className="">
+                      <NavigationMenuItem>
                         <NavigationMenuTrigger className="h-16 w-max relative after:absolute after:rounded-t-xl after:w-full after:h-1 after:bg-[#4E1B61] after:-bottom-0.5 after:left-0 after:opacity-0 hover:after:opacity-100 after:ease-in-out after:duration-300 after:transition-all">
                           Categories
                         </NavigationMenuTrigger>
-                        <NavigationMenuContent className="bg-white">
-                          {hiddenCategories.map((category) => (
-                            <NavigationMenuLink
-                              key={category._id}
-                              href={`/${category._id}`}
-                            >
-                              {category.categoryName}
-                            </NavigationMenuLink>
-                          ))}
+                        <NavigationMenuContent className="bg-white grid grid-cols-2 py-2 !border border-[#4e1b6156]">
+                          {/* <div className="images col-span-1 px-2 border-r-2">
+                            <Image
+                              src="https://via.placeholder.com/150"
+                              alt=""
+                              className="w-full h-full"
+                              width={1000}
+                              height={1000}
+                            />
+                          </div> */}
+                          <div className="links col-span-2">
+                            {data?.data?.map((category) => (
+                              <NavigationMenuLink
+                                key={category._id}
+                                href={`/${category._id}`}
+                                className="block px-2 py-0.5 relative after:absolute after:w-1 after:rounded-l after:h-full after:right-0 after:top-0 after:bg-[#4E1B61] after:opacity-0 hover:after:opacity-100 after:ease-in-out after:duration-300 after:transition-all font-medium hover:font-semibold duration-75 ease-in-out transition-all"
+                              >
+                                {category.categoryName}
+                              </NavigationMenuLink>
+                            ))}
+                          </div>
                         </NavigationMenuContent>
                       </NavigationMenuItem>
                     </NavigationMenuList>
