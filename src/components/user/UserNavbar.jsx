@@ -3,12 +3,9 @@ import Link from "next/link";
 import { Input } from "../ui/input";
 import {
   HeartIcon,
-  MenuIcon,
-  Search,
   SearchIcon,
   ShoppingCartIcon,
   User2Icon,
-  X,
 } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
@@ -67,12 +64,40 @@ const UserNavbar = () => {
     };
   }, []);
 
-  window.onresize = () => {
-    window.innerWidth > 1024 ? setToggle(true) : setToggle(false);
-  };
+  useEffect(() => {
+    const handleResize = () => {
+      setWindowWidth(window.innerWidth);
+    };
 
+    window.addEventListener("resize", handleResize);
 
-  
+    const categories = data?.data || [];
+    const hidden = [];
+    const visible = [];
+
+    if (windowWidth < 1500) {
+      let interval = 50;
+      for (let i = categories.length - 1; i >= 0; i--) {
+        if (interval > 0) {
+          hidden.push(categories[i]);
+          interval -= 50;
+        } else {
+          visible.push(categories[i]);
+          interval = 50;
+        }
+      }
+    } else {
+      visible.push(...categories);
+    }
+
+    setHiddenCategories(hidden.reverse());
+    setVisibleCategories(visible.reverse());
+
+    return () => {
+      window.removeEventListener("resize", handleResize);
+    };
+  }, [windowWidth, data]);
+
   const handleLogout = () => {
     logout();
     setIsAuth(false);
@@ -106,52 +131,49 @@ const UserNavbar = () => {
                 ref={containerRef}
                 className="flex items-center font-medium ml-4 h-16"
               >
-                {data?.data?.map((category) => (
+                {visibleCategories.map((category) => (
                   <li
                     key={category._id}
                     className="h-16 w-max relative after:absolute after:rounded-t-xl after:w-full after:h-1 after:bg-[#4E1B61] after:-bottom-0.5 after:left-0 after:opacity-0 hover:after:opacity-100 after:ease-in-out after:duration-300 after:transition-all"
                   >
                     <Link
-                      href={category._id}
+                      href={`/${category.categoryName
+                        .toLowerCase()
+                        .replace(" ", "-")}-${category._id}`}
                       className="px-3 h-full flex justify-center items-center"
                     >
                       {category.categoryName}
                     </Link>
                   </li>
                 ))}
-                <li className="h-16">
-                  <NavigationMenu>
-                    <NavigationMenuList>
-                      <NavigationMenuItem>
-                        <NavigationMenuTrigger className="h-16 w-max relative after:absolute after:rounded-t-xl after:w-full after:h-1 after:bg-[#4E1B61] after:-bottom-0.5 after:left-0 after:opacity-0 hover:after:opacity-100 after:ease-in-out after:duration-300 after:transition-all">
-                          Categories
-                        </NavigationMenuTrigger>
-                        <NavigationMenuContent className="bg-white grid grid-cols-2 py-2 !border border-[#4e1b6156]">
-                          {/* <div className="images col-span-1 px-2 border-r-2">
-                            <Image
-                              src="https://via.placeholder.com/150"
-                              alt=""
-                              className="w-full h-full"
-                              width={1000}
-                              height={1000}
-                            />
-                          </div> */}
-                          <div className="links col-span-2">
-                            {data?.data?.map((category) => (
-                              <NavigationMenuLink
-                                key={category._id}
-                                href={`/${category._id}`}
-                                className="block px-2 py-0.5 relative after:absolute after:w-1 after:rounded-l after:h-full after:right-0 after:top-0 after:bg-[#4E1B61] after:opacity-0 hover:after:opacity-100 after:ease-in-out after:duration-300 after:transition-all font-medium hover:font-semibold duration-75 ease-in-out transition-all"
-                              >
-                                {category.categoryName}
-                              </NavigationMenuLink>
-                            ))}
-                          </div>
-                        </NavigationMenuContent>
-                      </NavigationMenuItem>
-                    </NavigationMenuList>
-                  </NavigationMenu>
-                </li>
+                {hiddenCategories.length > 0 && (
+                  <li className="h-16">
+                    <NavigationMenu>
+                      <NavigationMenuList>
+                        <NavigationMenuItem>
+                          <NavigationMenuTrigger className="h-16 w-max relative after:absolute after:rounded-t-xl after:w-full after:h-1 after:bg-[#4E1B61] after:-bottom-0.5 after:left-0 after:opacity-0 hover:after:opacity-100 after:ease-in-out after:duration-300 after:transition-all">
+                            Categories
+                          </NavigationMenuTrigger>
+                          <NavigationMenuContent className="bg-white grid grid-cols-1 py-2 !border border-[#4e1b6156]">
+                            <div className="links col-span-1">
+                              {hiddenCategories.map((category) => (
+                                <NavigationMenuLink
+                                  key={category._id}
+                                  href={`/${category.categoryName
+                                    .toLowerCase()
+                                    .replace(" ", "-")}-${category._id}`}
+                                  className="block px-2 py-0.5 relative after:absolute after:w-1 after:rounded-l after:h-full after:right-0 after:top-0 after:bg-[#4E1B61] after:opacity-0 hover:after:opacity-100 after:ease-in-out after:duration-300 after:transition-all font-medium hover:font-semibold duration-75 ease-in-out transition-all"
+                                >
+                                  {category.categoryName}
+                                </NavigationMenuLink>
+                              ))}
+                            </div>
+                          </NavigationMenuContent>
+                        </NavigationMenuItem>
+                      </NavigationMenuList>
+                    </NavigationMenu>
+                  </li>
+                )}
               </ul>
             </div>
             <div className="right flex items-center justify-center">
@@ -162,7 +184,7 @@ const UserNavbar = () => {
                 }}
                 className={
                   (lastScroll > 104 ? "bg-[#4E1B61] text-white " : "") +
-                  `ml-3 border rounded-full border-[#4E1B61] duration-150 ease-in-out transition-all sm:h-11 sm:w-11 h-[33px] w-[33px] grid place-items-center lg:hidden`
+                  ml-3 border rounded-full border-[#4E1B61] duration-150 ease-in-out transition-all sm:h-11 sm:w-11 h-[33px] w-[33px] grid place-items-center lg:hidden
                 }
               >
                 <p className=" sm:p-2.5 p-1">
@@ -191,16 +213,16 @@ const UserNavbar = () => {
               <ul
                 className={
                   // (windowWidth <= 768
-                  //   ? (toggle ? `-left-0` : `-left-full`) +
-                  //     ` flex-col absolute top-0 left-0 w-full h-screen bg-red-300 transition-all ease-in-out duration-500`
-                  //   : ` flex-row`) +
-                  ` flex items-center justify-center`
+                  //   ? (toggle ? -left-0 : -left-full) +
+                  //      flex-col absolute top-0 left-0 w-full h-screen bg-red-300 transition-all ease-in-out duration-500
+                  //   :  flex-row) +
+                  `flex items-center justify-center`
                 }
               >
                 <li
                   className={
                     (lastScroll > 104 ? " " : "") +
-                    `ml-3 flex justify-center items-center rounded-full border-[#4E1B61] duration-150 ease-in-out transition-all`
+                    "ml-3 flex justify-center items-center rounded-full border-[#4E1B61] duration-150 ease-in-out transition-all"
                   }
                   // border bg-[#4E1B61] text-white
                 >
@@ -212,13 +234,20 @@ const UserNavbar = () => {
                             fill="#4E1B61"
                             className="sm:w-5 sm:h-5 w-3.5 h-3.5"
                           />
-                          <span className="absolute text-xs top-0 right-0 bg-white font-medium border rounded-full text-center w-5 h-5 flex justify-center items-center">
+                          <span
+                            className={
+                              (lastScroll > 104
+                                ? "bg-[#4E1B61] border-[#4E1B61] text-[#fff]"
+                                : "bg-white") +
+                              " absolute text-xs top-0 right-0  font-medium border rounded-full text-center w-5 h-5 flex justify-center items-center"
+                            }
+                          >
                             0
                           </span>
                         </Link>
                       </TooltipTrigger>
                       <TooltipContent className=" bg-white">
-                        <p>Wishlist</p>
+                        <p className=" text-xs">Wishlist</p>
                       </TooltipContent>
                     </Tooltip>
                   </TooltipProvider>
@@ -226,7 +255,7 @@ const UserNavbar = () => {
                 <li
                   className={
                     (lastScroll > 104 ? " " : "") +
-                    `  ml-0.5 flex justify-center items-center rounded-full border-[#4E1B61] duration-150 ease-in-out transition-all`
+                    "ml-0.5 flex justify-center items-center rounded-full border-[#4E1B61] duration-150 ease-in-out transition-all"
                   }
                   // border bg-[#4E1B61] text-white
                 >
@@ -241,18 +270,25 @@ const UserNavbar = () => {
                             fill="#4E1B61"
                             className="sm:w-5 sm:h-5 w-3.5 h-3.5"
                           />
-                          <span className="absolute text-xs top-0 right-0 bg-white font-medium border rounded-full text-center w-5 h-5 flex justify-center items-center">
+                          <span
+                            className={
+                              (lastScroll > 104
+                                ? "bg-[#4E1B61] border-[#4E1B61] text-[#fff]"
+                                : "bg-white") +
+                              " absolute text-xs top-0 right-0  font-medium border rounded-full text-center w-5 h-5 flex justify-center items-center"
+                            }
+                          >
                             0
                           </span>
                         </Link>
                       </TooltipTrigger>
                       <TooltipContent className=" bg-white">
-                        <p>Cart</p>
+                        <p className=" text-xs">Cart</p>
                       </TooltipContent>
                     </Tooltip>
                   </TooltipProvider>
                 </li>
-                <li className={` ml-1 flex justify-center items-center`}>
+                <li className={" ml-1 flex justify-center items-center"}>
                   {isAuth ? (
                     <DropdownMenu>
                       <DropdownMenuTrigger
@@ -297,9 +333,9 @@ const UserNavbar = () => {
                 className="toggle relative grid place-items-center text-black hover:bg-white hover:text-black hover:border-0 border-0 md:hidden"
               >
                 <MenuIcon
-                  className={(toggle ? "hidden" : "block") + ` absolute`}
+                  className={(toggle ? "hidden" : "block") +  absolute}
                 />
-                <X className={(toggle ? "block" : "hidden") + ` absolute`} />
+                <X className={(toggle ? "block" : "hidden") +  absolute} />
               </Button> */}
             </div>
           </div>
@@ -308,5 +344,5 @@ const UserNavbar = () => {
     </header>
   );
 };
-
+ 
 export default UserNavbar;
