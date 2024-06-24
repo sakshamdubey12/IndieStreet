@@ -72,26 +72,16 @@ const UserNavbar = () => {
     window.addEventListener("resize", handleResize);
 
     const categories = data?.data || [];
-    const hidden = [];
-    const visible = [];
+    let hidden = [];
+    let visible = [...categories];
 
-    if (windowWidth < 1500) {
-      let interval = 50;
-      for (let i = categories.length - 1; i >= 0; i--) {
-        if (interval > 0) {
-          hidden.push(categories[i]);
-          interval -= 50;
-        } else {
-          visible.push(categories[i]);
-          interval = 50;
-        }
-      }
-    } else {
-      visible.push(...categories);
+    if (windowWidth < 1300) {
+      const interval = Math.floor((1300 - windowWidth) / 50);
+      hidden = visible.splice(-interval);
     }
 
-    setHiddenCategories(hidden.reverse());
-    setVisibleCategories(visible.reverse());
+    setHiddenCategories(hidden);
+    setVisibleCategories(visible);
 
     return () => {
       window.removeEventListener("resize", handleResize);
@@ -116,38 +106,47 @@ const UserNavbar = () => {
         </div>
         <div
           className={
-            (lastScroll > 104 ? "bg-[#ffffff8b] backdrop-blur" : "bg-white") +
-            ` px-[5%] lower text-[#4E1B61] transition-all ease-in-out duration-200`
+            (lastScroll > 104
+              ? "bg-[#ffffff8b] backdrop-blur md:py-1 pb-1 pt-0.5"
+              : "bg-white md:py-2 pb-2 pt-1") +
+            ` !px-[5%] lower text-[#4E1B61] transition-all ease-in-out duration-200`
           }
         >
-          <div className="flex items-center justify-between max-w-[100rem] mx-auto">
-            <div className="left flex items-center">
-              <div className="logo font-semibold transition-all ease-in-out duration-200 md:w-44 w-32">
-                <Link href="/" className=" w-full">
-                  <img src="/assets/website_logo.png" alt="" />
-                </Link>
-              </div>
+          <div className="grid lg:grid-cols-6 md:grid-cols-4 grid-cols-6 !max-w-[100rem] !mx-auto lg:gap-3 md:gap-2 gap-0">
+            <div className="logo font-semibold transition-all ease-in-out duration-200 sm:col-span-1 col-span-2 order-1 w-full h-full flex items-center justify-center">
+              <Link href="/" className="">
+              <Image
+                      src="/assets/website_logo.png"
+                      width={1000}
+                      height={1000}
+                      style={{ objectFit: "cover" }}
+                      className=" w-full h-full xl:px-5"
+                      alt=""
+                    />
+              </Link>
+            </div>
+            <div className="ulcont lg:col-span-2 md:col-span-1 sm:col-span-2 col-span-1 h-full w-full order-2">
               <ul
                 ref={containerRef}
-                className="flex items-center font-medium ml-4 h-16"
+                className="flex items-center font-medium ml-4 h-full lg:left-0 mx-auto"
               >
                 {visibleCategories.map((category) => (
                   <li
                     key={category._id}
-                    className="h-16 w-max relative after:absolute after:rounded-t-xl after:w-full after:h-1 after:bg-[#4E1B61] after:-bottom-0.5 after:left-0 after:opacity-0 hover:after:opacity-100 after:ease-in-out after:duration-300 after:transition-all"
+                    className="h-16 w-fit relative after:absolute after:rounded-t-xl after:w-full after:h-1 after:bg-[#4E1B61] after:-bottom-0.5 after:left-0 after:opacity-0 hover:after:opacity-100 after:ease-in-out after:duration-300 after:transition-all"
                   >
                     <Link
                       href={`/${category.categoryName
                         .toLowerCase()
                         .replace(" ", "-")}-${category._id}`}
-                      className="px-3 h-full flex justify-center items-center"
+                      className="px-2 h-full flex justify-center items-center"
                     >
                       {category.categoryName}
                     </Link>
                   </li>
                 ))}
                 {hiddenCategories.length > 0 && (
-                  <li className="h-16">
+                  <li className="md:h-16">
                     <NavigationMenu>
                       <NavigationMenuList>
                         <NavigationMenuItem>
@@ -162,7 +161,7 @@ const UserNavbar = () => {
                                   href={`/${category.categoryName
                                     .toLowerCase()
                                     .replace(" ", "-")}-${category._id}`}
-                                  className="block px-2 py-0.5 relative after:absolute after:w-1 after:rounded-l after:h-full after:right-0 after:top-0 after:bg-[#4E1B61] after:opacity-0 hover:after:opacity-100 after:ease-in-out after:duration-300 after:transition-all font-medium hover:font-semibold duration-75 ease-in-out transition-all"
+                                  className="block px-2 py-0.5 relative after:absolute after:w-1 after:rounded-l after:h-full after:right-0 after:top-0 after:bg-[#4E1B61] after:opacity-0 hover:after:opacity-100 after:ease-in-out after:duration-300 after:transition-all font-medium hover:font-semibold duration-75 ease-in-out transition-all md:text-base text-sm"
                                 >
                                   {category.categoryName}
                                 </NavigationMenuLink>
@@ -176,173 +175,130 @@ const UserNavbar = () => {
                 )}
               </ul>
             </div>
-            <div className="right flex items-center justify-center">
-              {/* <button
-                onClick={() => {
-                  setToggle(!toggle);
-                  console.log(toggle);
-                }}
-                className={
-                  (lastScroll > 104 ? "bg-[#4E1B61] text-white " : "") +
-                  ml-3 border rounded-full border-[#4E1B61] duration-150 ease-in-out transition-all sm:h-11 sm:w-11 h-[33px] w-[33px] grid place-items-center lg:hidden
-                }
-              >
-                <p className=" sm:p-2.5 p-1">
-                  <Search className="sm:w-5 sm:h-5 w-3.5 h-3.5" />
-                </p>
-              </button> */}
-              <div
-                className={
-                  (lastScroll > 104 ? "" : "") +
-                  " search lg:block flex justify-center items-center lg:relative absolute lg:top-0 md:top-[90%] sm:top-[88%] top-[85%] lg:right-0 lg:w-max md:w-72 sm:w-64 w-56 lg:h-auto sm:h-16 h-12"
-                }
-              >
-                <form className=" flex items-center relative">
-                  <Input
-                    className=" lg:w-[25rem] md:w-64 sm:w-56 w-52 h-10 rounded-xl placeholder:text-[#4e1b6191] bg-transparent font-normal border-[#4e1b6185]"
-                    placeholder="Search"
-                  />
-                  <Button
-                    className="w-10 h-10 rounded-r-xl rounded-l-none absolute right-0"
-                    size="icon"
-                  >
-                    <SearchIcon className="w-5 h-5" />
-                  </Button>
-                </form>
-              </div>
-              <ul
-                className={
-                  // (windowWidth <= 768
-                  //   ? (toggle ? -left-0 : -left-full) +
-                  //      flex-col absolute top-0 left-0 w-full h-screen bg-red-300 transition-all ease-in-out duration-500
-                  //   :  flex-row) +
-                  `flex items-center justify-center`
-                }
-              >
-                <li
-                  className={
-                    (lastScroll > 104 ? " " : "") +
-                    "ml-3 flex justify-center items-center rounded-full border-[#4E1B61] duration-150 ease-in-out transition-all"
-                  }
-                  // border bg-[#4E1B61] text-white
+            <div
+              className={
+                "search h-full lg:col-span-2 md:col-span-1 col-span-6 md:order-3 order-4 w-full flex justify-center items-center"
+              }
+            >
+              <form className=" flex items-center relative w-full">
+                <Input
+                  className="h-10 w-full rounded-xl placeholder:text-[#00000091] text-[#4e1b61] bg-transparent font-medium border-[#4e1b6185] pr-12"
+                  placeholder="Search...."
+                />
+                <Button
+                  className="w-10 h-10 rounded-r-xl rounded-l-none absolute right-0"
+                  size="icon"
                 >
-                  <TooltipProvider>
-                    <Tooltip>
-                      <TooltipTrigger className="sm:h-10 sm:w-10 h-8 w-8 grid place-items-center">
-                        <Link href="/" className=" sm:p-2.5 p-1 flex relative">
-                          <HeartIcon
-                            fill="#4E1B61"
-                            className="sm:w-5 sm:h-5 w-3.5 h-3.5"
-                          />
-                          <span
-                            className={
-                              (lastScroll > 104
-                                ? "bg-[#4E1B61] border-[#4E1B61] text-[#fff]"
-                                : "bg-white") +
-                              " absolute text-xs top-0 right-0  font-medium border rounded-full text-center w-5 h-5 flex justify-center items-center"
-                            }
-                          >
-                            0
-                          </span>
-                        </Link>
-                      </TooltipTrigger>
-                      <TooltipContent className=" bg-white">
-                        <p className=" text-xs">Wishlist</p>
-                      </TooltipContent>
-                    </Tooltip>
-                  </TooltipProvider>
-                </li>
-                <li
-                  className={
-                    (lastScroll > 104 ? " " : "") +
-                    "ml-0.5 flex justify-center items-center rounded-full border-[#4E1B61] duration-150 ease-in-out transition-all"
-                  }
-                  // border bg-[#4E1B61] text-white
-                >
-                  <TooltipProvider>
-                    <Tooltip>
-                      <TooltipTrigger className="sm:h-10 sm:w-10 h-8 w-8 grid place-items-center">
-                        <Link
-                          href="/cart"
-                          className=" sm:p-2.5 p-1 flex relative"
+                  <SearchIcon className="w-5 h-5" />
+                </Button>
+              </form>
+            </div>
+            <ul
+              className={`flex items-center justify-end md:col-span-1 col-span-3 md:order-4 order-3`}
+            >
+              <li
+                className={
+                  (lastScroll > 104 ? " " : "") +
+                  "lg:ml-3 flex justify-center items-center rounded-full border-[#4E1B61] duration-150 ease-in-out transition-all"
+                }
+              >
+                <TooltipProvider>
+                  <Tooltip>
+                    <TooltipTrigger className="sm:h-10 sm:w-10 h-8 w-8 grid place-items-center">
+                      <Link href="/" className=" sm:p-2.5 p-1 flex relative">
+                        <HeartIcon fill="#4E1B61" className="w-5 h-5" />
+                        <span
+                          className={
+                            (lastScroll > 104
+                              ? "bg-[#4E1B61] border-[#4E1B61] text-[#fff]"
+                              : "bg-white") +
+                            " absolute text-xs sm:top-0 -top-2 sm:right-0 -right-1.5 font-medium border rounded-full text-center w-5 h-5 flex justify-center items-center"
+                          }
                         >
-                          <ShoppingCartIcon
-                            fill="#4E1B61"
-                            className="sm:w-5 sm:h-5 w-3.5 h-3.5"
-                          />
-                          <span
-                            className={
-                              (lastScroll > 104
-                                ? "bg-[#4E1B61] border-[#4E1B61] text-[#fff]"
-                                : "bg-white") +
-                              " absolute text-xs top-0 right-0  font-medium border rounded-full text-center w-5 h-5 flex justify-center items-center"
-                            }
-                          >
-                            0
-                          </span>
-                        </Link>
-                      </TooltipTrigger>
-                      <TooltipContent className=" bg-white">
-                        <p className=" text-xs">Cart</p>
-                      </TooltipContent>
-                    </Tooltip>
-                  </TooltipProvider>
-                </li>
-                <li className={" ml-1 flex justify-center items-center"}>
-                  {isAuth ? (
-                    <DropdownMenu>
-                      <DropdownMenuTrigger
-                        className={
-                          (lastScroll > 104 ? " bg-[#4E1B61] text-white" : "") +
-                          " sm:w-10 sm:h-10 h-8 w-8 grid place-items-center border border-[#4E1B61] rounded-full outline-none duration-150 ease-in-out transition-all"
-                        }
+                          0
+                        </span>
+                      </Link>
+                    </TooltipTrigger>
+                    <TooltipContent className=" bg-white">
+                      <p className=" text-xs">Wishlist</p>
+                    </TooltipContent>
+                  </Tooltip>
+                </TooltipProvider>
+              </li>
+              <li
+                className={
+                  (lastScroll > 104 ? " " : "") +
+                  "ml-0.5 flex justify-center items-center rounded-full border-[#4E1B61] duration-150 ease-in-out transition-all"
+                }
+              >
+                <TooltipProvider>
+                  <Tooltip>
+                    <TooltipTrigger className="sm:h-10 sm:w-10 h-8 w-8 grid place-items-center">
+                      <Link
+                        href="/cart"
+                        className=" sm:p-2.5 p-1 flex relative"
                       >
-                        <User2Icon className=" sm:w-5 sm:h-5 w-3.5 h-3.5  " />
-                      </DropdownMenuTrigger>
-                      <DropdownMenuContent className=" bg-white sm:text-sm text-xs">
-                        <DropdownMenuLabel>My Account</DropdownMenuLabel>
-                        <DropdownMenuSeparator />
-                        <DropdownMenuItem onClick={handleLogout}>
-                          Logout
-                        </DropdownMenuItem>
-                        {/* <DropdownMenuItem>
-                        <Link href="/vendor">Login as Vendor</Link>
-                      </DropdownMenuItem> */}
-                      </DropdownMenuContent>
-                    </DropdownMenu>
-                  ) : (
-                    <Link
-                      href="/auth"
+                        <ShoppingCartIcon fill="#4E1B61" className="w-5 h-5" />
+                        <span
+                          className={
+                            (lastScroll > 104
+                              ? "bg-[#4E1B61] border-[#4E1B61] text-[#fff]"
+                              : "bg-white") +
+                            " absolute text-xs sm:top-0 -top-2 sm:right-0 -right-1.5 font-medium border rounded-full text-center w-5 h-5 flex justify-center items-center"
+                          }
+                        >
+                          0
+                        </span>
+                      </Link>
+                    </TooltipTrigger>
+                    <TooltipContent className=" bg-white">
+                      <p className=" text-xs">Cart</p>
+                    </TooltipContent>
+                  </Tooltip>
+                </TooltipProvider>
+              </li>
+              <li className={"flex justify-center items-center ml-2"}>
+                {isAuth ? (
+                  <DropdownMenu>
+                    <DropdownMenuTrigger
                       className={
-                        (lastScroll > 104
-                          ? "bg-[#4E1B61] text-white "
-                          : "bg-transparent ") +
-                        "ml-2 text-[#4E1B61] sm:px-5 sm:py-2 px-2.5 rounded sm:text-sm text-xs ease-in-out transition-all duration-150 border border-[#4E1B61] font-medium"
+                        (lastScroll > 104 ? " bg-[#4E1B61] text-white" : "") +
+                        " sm:w-10 sm:h-10 h-8 w-8 grid place-items-center border border-[#4E1B61] rounded-full outline-none duration-150 ease-in-out transition-all"
                       }
                     >
-                      Login
-                    </Link>
-                  )}
-                </li>
-              </ul>
-              {/* <Button
-                onClick={() => {
-                  setToggle(!toggle);
-                }}
-                variant="ghost"
-                className="toggle relative grid place-items-center text-black hover:bg-white hover:text-black hover:border-0 border-0 md:hidden"
-              >
-                <MenuIcon
-                  className={(toggle ? "hidden" : "block") +  absolute}
-                />
-                <X className={(toggle ? "block" : "hidden") +  absolute} />
-              </Button> */}
-            </div>
+                      <User2Icon className=" sm:w-5 sm:h-5 w-3.5 h-3.5  " />
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent className=" bg-white sm:text-sm text-xs">
+                      <DropdownMenuLabel>My Account</DropdownMenuLabel>
+                      <DropdownMenuSeparator />
+                      <DropdownMenuItem onClick={handleLogout}>
+                        Logout
+                      </DropdownMenuItem>
+                      {/* <DropdownMenuItem>
+                        <Link href="/vendor">Login as Vendor</Link>
+                      </DropdownMenuItem> */}
+                    </DropdownMenuContent>
+                  </DropdownMenu>
+                ) : (
+                  <Link
+                    href="/auth"
+                    className={
+                      (lastScroll > 104
+                        ? "bg-[#4E1B61] text-white "
+                        : "bg-transparent ") +
+                      "lg:ml-2 text-[#4E1B61] px-5 py-2 rounded sm:text-sm text-xs ease-in-out transition-all duration-150 border border-[#4E1B61] font-medium"
+                    }
+                  >
+                    Login
+                  </Link>
+                )}
+              </li>
+            </ul>
           </div>
         </div>
       </nav>
     </header>
   );
 };
- 
+
 export default UserNavbar;

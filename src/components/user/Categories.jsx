@@ -38,9 +38,9 @@ export function CarouselSize({ title }) {
               >
                 <Link
                   className=" block"
-                  href={`/${category.categoryName
+                  href={`/category/${category.categoryName
                     .toLowerCase()
-                    .replace(" ", "-")}-${category._id}`}
+                    .replace(" ", "-")}/${category._id}`}
                 >
                   {" "}
                   <div className=" cursor-pointer">

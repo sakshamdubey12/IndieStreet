@@ -16,7 +16,6 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Table, TableBody, TableCell, TableRow } from "@/components/ui/table";
 import { useGetProductsByIDQuery } from "@/redux/slices/GetSingleProduct";
-import { useParams } from "next/navigation";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
   Dialog,
@@ -30,14 +29,10 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { usePostReviewMutation } from "@/redux/slices/ProductReview";
 
-const ProductInfo = (props) => {
+const ProductInfo = ({ params }) => {
   const [reviewData, setReviewData] = useState({ rating: "", review: "" });
   const [postReview, { isLoading: reviewLoading, isSuccess, isError }] =
     usePostReviewMutation();
-  const item = useParams();
-  const [productId, setProductId] = useState(
-    item.item.substring(item.item.lastIndexOf("-") + 1)
-  );
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -54,19 +49,16 @@ const ProductInfo = (props) => {
 
     try {
       await postReview({ reviewData }).unwrap();
-      // Handle success, e.g., close dialog, show success message, clear form
       console.log("Review posted successfully!");
-      setReviewData({ rating: "", review: "" }); // Clear the form
+      setReviewData({ rating: "", review: "" }); 
     } catch (error) {
       console.error("Failed to post review:", error);
     }
   };
 
-  useEffect(() => {
-    setProductId(item.item.substring(item.item.lastIndexOf("-") + 1));
-  }, [item]);
-  const { data, error, isLoading, refetch } =
-    useGetProductsByIDQuery(productId);
+  const { data, error, isLoading, refetch } = useGetProductsByIDQuery(
+    params.productid
+  );
 
   return (
     <section className="px-[7%] py-14">
@@ -364,7 +356,7 @@ const ProductInfo = (props) => {
                           </span>{" "}
                         </div>
                       </div>
-                      {/* <div className="images flex mb-2 text-gray-600">
+                      <div className="images flex mb-2 text-gray-600">
                 {images.map((image, index) => (
                   <div
                     className="img-cont w-20 h-20 overflow-hidden rounded mx-1"
@@ -377,7 +369,7 @@ const ProductInfo = (props) => {
                     />
                   </div>
                 ))}
-              </div> */}
+              </div>
                       <CardDescription className=" text-gray-600">
                         {review.review}
                       </CardDescription>
@@ -385,7 +377,7 @@ const ProductInfo = (props) => {
                   </div>
                 ))}
               </div>
-              {/* <div className="review-card shadow-none">
+              <div className="review-card shadow-none">
             <Card className="w-full py-3 px-5">
               <div className="info flex items-center justify-between mb-3">
                 <div className="user flex items-center">
@@ -401,7 +393,7 @@ const ProductInfo = (props) => {
                 </div>
               </div>
               <div className="images flex mb-2 text-gray-600">
-                {images.map((image, index) => (
+                {/* {images.map((image, index) => (
                   <div
                     className="img-cont w-20 h-20 overflow-hidden rounded mx-1"
                     key={index}
@@ -412,7 +404,7 @@ const ProductInfo = (props) => {
                       className=" object-fill w-20 h-20"
                     />
                   </div>
-                ))}
+                ))} */}
               </div>
               <CardDescription className=" text-gray-600">
                 Lorem ipsum dolor sit amet consectetur adipisicing elit.
@@ -421,7 +413,7 @@ const ProductInfo = (props) => {
                 est, sint quisquam error eaque illum.
               </CardDescription>
             </Card>
-          </div> */}
+          </div>
             </div>
             <div className="Specifications col-span-2 sticky top-28 h-fit">
               <Header title="Product Details" />

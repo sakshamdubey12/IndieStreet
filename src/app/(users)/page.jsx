@@ -1,6 +1,6 @@
 "use client";
 
-import HomeCarousel from "@/components/user/Carousel";
+import BannerCarousel from "@/components/user/BannerCarousel";
 import { CarouselSize } from "@/components/user/Categories";
 import ProductDisplay from "@/components/user/ProductDisplay";
 import Style from "@/components/user/Style";
@@ -10,12 +10,12 @@ import React, { useEffect } from "react";
 const Home = () => {
   return (
     <>
-      <HomeCarousel />
+      <BannerCarousel />
       <CarouselSize title="Shop by Categories" />
       <TrendingCollection />
-      <ProductDisplay title="Shop by Arts & Crafts" url="/arts-&-crafts" />
+      <ProductDisplay title="Shop by Arts & Crafts" url="/category/arts-&-crafts" />
       <Style />
-      <ProductDisplay title="Purses & Bags" url="/bags-&-purses" />
+      <ProductDisplay title="Purses & Bags" url="/category/bags-&-purses" />
     </>
   );
 };
