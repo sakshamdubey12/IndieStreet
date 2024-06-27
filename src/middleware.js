@@ -9,8 +9,6 @@ export async function middleware(req) {
   }
   try {
     const decoded = jwt.decode(token, process.env.NEXT_PUBLIC_JWT_SECRET);
-    console.log(decoded);
-    console.log(req.nextUrl.clone().pathname.includes("vendor"));
     const url = req.nextUrl.clone();
     if (decoded.role === "admin") {
       if (url.pathname.includes("vendor")&& !url.pathname.includes("admin/vendor")) {

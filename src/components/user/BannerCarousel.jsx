@@ -20,9 +20,10 @@ const BannerCarousel = () => {
       <Carousel className="!w-full h-full">
         <CarouselContent className="min-w-full lg:h-[30rem] md:h-[28rem] sm:h-[24rem] h-[18rem]">
           {images.map((img, index) => (
-            <CarouselItem key={index} className="h-full min-w-full bg-red-400">
+            <CarouselItem key={index} className="h-full min-w-full">
               <Image
-                fill
+              width={1000}
+              height={1000}
                 src={img}
                 alt={`Image ${index + 1}`}
                 className="!min-w-full !h-full object-cover"

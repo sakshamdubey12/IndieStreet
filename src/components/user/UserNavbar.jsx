@@ -37,21 +37,31 @@ import {
 } from "@/components/ui/navigation-menu";
 import { useGetProductCategoryQuery } from "@/redux/slices/ProductCategorySlice";
 import Image from "next/image";
+import { useSelector } from "react-redux";
 
 const UserNavbar = () => {
   const [lastScroll, setLastScroll] = useState(0);
   const [toggle, setToggle] = useState(true);
   const [isAuth, setIsAuth] = useState(false);
+  const [email, setEmail] = useState(null);
   const [visibleCategories, setVisibleCategories] = useState([]);
   const [hiddenCategories, setHiddenCategories] = useState([]);
   const containerRef = useRef(null);
   const [windowWidth, setWindowWidth] = useState(window.innerWidth);
   const router = useRouter();
   const { data, error, isLoading } = useGetProductCategoryQuery();
+  const cartLength = useSelector((state) => state.cart.length);
+  const wishlistLength = useSelector((state) => state.wishlist.length);
 
   useEffect(() => {
     const authStatus = localStorage.getItem("isAuth") === "true";
     setIsAuth(authStatus);
+
+    const storedUserData = JSON.parse(localStorage.getItem("userData"));
+    if (storedUserData && storedUserData.email) {
+      setEmail(storedUserData.email);
+    }
+
     const handleScroll = () => {
       const scrollHeight = Math.floor(window.scrollY);
       setLastScroll(scrollHeight);
@@ -115,14 +125,14 @@ const UserNavbar = () => {
           <div className="grid lg:grid-cols-6 md:grid-cols-4 grid-cols-6 !max-w-[100rem] !mx-auto lg:gap-3 md:gap-2 gap-0">
             <div className="logo font-semibold transition-all ease-in-out duration-200 sm:col-span-1 col-span-2 order-1 w-full h-full flex items-center justify-center">
               <Link href="/" className="">
-              <Image
-                      src="/assets/website_logo.png"
-                      width={1000}
-                      height={1000}
-                      style={{ objectFit: "cover" }}
-                      className=" w-full h-full xl:px-5"
-                      alt=""
-                    />
+                <Image
+                  src="/assets/website_logo.png"
+                  width={1000}
+                  height={1000}
+                  style={{ objectFit: "cover" }}
+                  className=" w-full h-full xl:px-5"
+                  alt=""
+                />
               </Link>
             </div>
             <div className="ulcont lg:col-span-2 md:col-span-1 sm:col-span-2 col-span-1 h-full w-full order-2">
@@ -136,9 +146,9 @@ const UserNavbar = () => {
                     className="h-16 w-fit relative after:absolute after:rounded-t-xl after:w-full after:h-1 after:bg-[#4E1B61] after:-bottom-0.5 after:left-0 after:opacity-0 hover:after:opacity-100 after:ease-in-out after:duration-300 after:transition-all"
                   >
                     <Link
-                      href={`/${category.categoryName
+                      href={`/category/${category.categoryName
                         .toLowerCase()
-                        .replace(" ", "-")}-${category._id}`}
+                        .replace(" ", "-")}/${category._id}`}
                       className="px-2 h-full flex justify-center items-center"
                     >
                       {category.categoryName}
@@ -205,18 +215,25 @@ const UserNavbar = () => {
                 <TooltipProvider>
                   <Tooltip>
                     <TooltipTrigger className="sm:h-10 sm:w-10 h-8 w-8 grid place-items-center">
-                      <Link href="/" className=" sm:p-2.5 p-1 flex relative">
+                      <Link
+                        href="/wishlist"
+                        className=" sm:p-2.5 p-1 flex relative"
+                      >
                         <HeartIcon fill="#4E1B61" className="w-5 h-5" />
-                        <span
-                          className={
-                            (lastScroll > 104
-                              ? "bg-[#4E1B61] border-[#4E1B61] text-[#fff]"
-                              : "bg-white") +
-                            " absolute text-xs sm:top-0 -top-2 sm:right-0 -right-1.5 font-medium border rounded-full text-center w-5 h-5 flex justify-center items-center"
-                          }
-                        >
-                          0
-                        </span>
+                        {wishlistLength > 0 ? (
+                          <span
+                            className={
+                              (lastScroll > 104
+                                ? "bg-[#4E1B61] border-[#4E1B61] text-[#fff]"
+                                : "bg-white") +
+                              " absolute text-xs sm:top-0 -top-2 sm:right-0 -right-1.5 font-medium border rounded-full text-center w-5 h-5 flex justify-center items-center"
+                            }
+                          >
+                            {wishlistLength}
+                          </span>
+                        ) : (
+                          <></>
+                        )}
                       </Link>
                     </TooltipTrigger>
                     <TooltipContent className=" bg-white">
@@ -239,16 +256,20 @@ const UserNavbar = () => {
                         className=" sm:p-2.5 p-1 flex relative"
                       >
                         <ShoppingCartIcon fill="#4E1B61" className="w-5 h-5" />
-                        <span
-                          className={
-                            (lastScroll > 104
-                              ? "bg-[#4E1B61] border-[#4E1B61] text-[#fff]"
-                              : "bg-white") +
-                            " absolute text-xs sm:top-0 -top-2 sm:right-0 -right-1.5 font-medium border rounded-full text-center w-5 h-5 flex justify-center items-center"
-                          }
-                        >
-                          0
-                        </span>
+                        {cartLength > 0 ? (
+                          <span
+                            className={
+                              (lastScroll > 104
+                                ? "bg-[#4E1B61] border-[#4E1B61] text-[#fff]"
+                                : "bg-white") +
+                              " absolute text-xs sm:top-0 -top-2 sm:right-0 -right-1.5 font-medium border rounded-full text-center w-5 h-5 flex justify-center items-center"
+                            }
+                          >
+                            {cartLength}
+                          </span>
+                        ) : (
+                          <></>
+                        )}
                       </Link>
                     </TooltipTrigger>
                     <TooltipContent className=" bg-white">
@@ -262,14 +283,17 @@ const UserNavbar = () => {
                   <DropdownMenu>
                     <DropdownMenuTrigger
                       className={
-                        (lastScroll > 104 ? " bg-[#4E1B61] text-white" : "") +
-                        " sm:w-10 sm:h-10 h-8 w-8 grid place-items-center border border-[#4E1B61] rounded-full outline-none duration-150 ease-in-out transition-all"
+                        (lastScroll > 104 ? " " : "") +
+                        "ml-0.5 flex justify-center items-center rounded-full border-[#4E1B61] duration-150 ease-in-out transition-all outline-none"
                       }
                     >
-                      <User2Icon className=" sm:w-5 sm:h-5 w-3.5 h-3.5  " />
+                      <User2Icon
+                        fill="#4E1B61"
+                        className=" sm:w-5 sm:h-5 w-3.5 h-3.5  "
+                      />
                     </DropdownMenuTrigger>
-                    <DropdownMenuContent className=" bg-white sm:text-sm text-xs">
-                      <DropdownMenuLabel>My Account</DropdownMenuLabel>
+                    <DropdownMenuContent className=" bg-white sm:text-sm text-xs w-44">
+                      <DropdownMenuLabel>{email}</DropdownMenuLabel>
                       <DropdownMenuSeparator />
                       <DropdownMenuItem onClick={handleLogout}>
                         Logout

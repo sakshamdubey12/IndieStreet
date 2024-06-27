@@ -34,11 +34,8 @@ import {
 } from "@/components/ui/card";
 import { FaStar } from "react-icons/fa";
 import { useSelector, useDispatch } from "react-redux";
-import { useRouter } from "next/navigation";
 import { useGetProductsByCategoryQuery } from "@/redux/slices/GetAllProduct";
 import { setSortBy } from "@/redux/slices/productFilterSortSlice";
-import { Button } from "@/components/ui/button";
-import Link from "next/link";
 import { addToCart } from "@/redux/slices/cartSlice";
 import {
   addToWishlist,
@@ -48,8 +45,8 @@ import ProductCard from "@/components/user/ProductCard";
 
 const Products = ({ params }) => {
   const dispatch = useDispatch();
-  const cart = useSelector((state) => state.cart.items);
-  const wishlistItems = useSelector((state) => state.wishlist.items);
+  const cart = useSelector((state) => state.cart);
+  const wishlistItems = useSelector((state) => state.wishlist);
   const [wishlistIDs, setWishlistIDs] = useState([]);
   const [productName, setProductName] = useState(() => {
     const string = params.categoryname;
@@ -76,7 +73,6 @@ const Products = ({ params }) => {
         .split("-")
         .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
         .join(" ");
-
       return capitalizedFirstPart;
     });
     setProductCategoryId(params.categoryId);
@@ -220,7 +216,9 @@ const Products = ({ params }) => {
           <>
             {filterByCategory(products).map((product) => (
               <div className="card-container" key={product.id}>
-                <ProductCard product={product} />
+                <ProductCard
+                  product={product}
+                />
               </div>
             ))}
           </>
