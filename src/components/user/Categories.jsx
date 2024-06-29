@@ -26,9 +26,9 @@ export function CarouselSize({ title }) {
           opts={{
             align: "start",
           }}
-          className="sm:w-[92%] w-full mx-auto"
+          className="w-[92%] mx-auto"
         >
-          <CarouselPrevious className=" !sm:block !hidden border-2 border-black text-black lg:top-20 md:top-16 top-12" />
+          <CarouselPrevious className="border-2 border-black text-black lg:top-20 md:top-16 top-12 sm:-left-14 -left-8" />
 
           <CarouselContent className="p-3">
             {categoryData?.data?.map((category) => (
@@ -67,7 +67,7 @@ export function CarouselSize({ title }) {
             ))}
           </CarouselContent>
 
-          <CarouselNext className="!sm:block !hidden border-2 border-black text-black lg:top-20 md:top-16 top-12" />
+          <CarouselNext className="border-black text-black lg:top-20 md:top-16 top-12 sm:-right-14 -right-8" />
         </Carousel>
       </div>
     </section>

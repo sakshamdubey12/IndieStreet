@@ -2,8 +2,6 @@
 import Header from "@/components/user/Header";
 import {
   FilterIcon,
-  HeartIcon,
-  ShoppingBagIcon,
   SortDescIcon,
 } from "lucide-react";
 import { useEffect, useState } from "react";
@@ -107,6 +105,7 @@ const Products = ({ params }) => {
     const list = productList.filter((product) => {
       return product.categoryName.toUpperCase() === productName.toUpperCase();
     });
+    console.log(list);
     return sortProducts(list);
   };
 
@@ -216,9 +215,7 @@ const Products = ({ params }) => {
           <>
             {filterByCategory(products).map((product) => (
               <div className="card-container" key={product.id}>
-                <ProductCard
-                  product={product}
-                />
+                <ProductCard product={product} />
               </div>
             ))}
           </>

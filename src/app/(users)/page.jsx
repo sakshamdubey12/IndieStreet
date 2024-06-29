@@ -10,7 +10,6 @@ import { useGetProductCategoryQuery } from "@/redux/slices/ProductCategorySlice"
 
 const Home = () => {
   const { data, error, isLoading } = useGetProductCategoryQuery();
-  console.log(data?.data[0]?.categoryName);
   return (
     <>
       <BannerCarousel />

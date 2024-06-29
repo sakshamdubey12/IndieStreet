@@ -10,13 +10,22 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import Header from "@/components/user/Header";
-import { MinusIcon, PlusIcon, ShoppingCartIcon } from "lucide-react";
+import {
+  MinusIcon,
+  PlusIcon,
+  ShoppingCartIcon,
+  Trash2,
+  Trash2Icon,
+} from "lucide-react";
 import { useSelector, useDispatch } from "react-redux";
 import {
+  removeFromCart,
   increaseQuantity,
   decreaseQuantity,
   clearCart,
 } from "@/redux/slices/cartSlice";
+import Link from "next/link";
+import Image from "next/image";
 
 const Cart = () => {
   const dispatch = useDispatch();
@@ -30,6 +39,9 @@ const Cart = () => {
   };
   const handleClear = () => {
     dispatch(clearCart());
+  };
+  const removeFromCartFn = (id) => {
+    dispatch(removeFromCart({ id }));
   };
 
   const subtotal = cartItems.reduce(
@@ -52,29 +64,50 @@ const Cart = () => {
                 <TableRow className="text-gray-600 uppercase">
                   <TableHead>Product</TableHead>
                   <TableHead>Quantity</TableHead>
-                  <TableHead>Price</TableHead>
+                  <TableHead>Total Price</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
                 {cartItems.map((item) => (
-                  <TableRow key={item.id} className=" py-2 px-10">
+                  <TableRow key={item.id} className=" py-1 px-10">
                     <TableCell>
-                      <div className="flex items-center">
-                        <img
+                      <div className="flex items-start">
+                        <Image
+                          width={1000}
+                          height={1000}
                           src={item.images[0]}
                           alt={item.name}
                           className="w-16 h-16 mr-4"
                         />
-                        <div>
-                          <p className="font-semibold">{item.name}</p>
-                          {/* <p>Size: {item.size}</p> */}
+                        <div className="">
+                          <Link
+                            href={`/product/${item.name
+                              .toLowerCase()
+                              .replace(" ", "-")}/${item.id}`}
+                            className="font-semibold mb-1.5"
+                          >
+                            {item.name}
+                          </Link>
+                          <p className=" text-sm">
+                            <span className="text-red-600 mr-2 font-medium">
+                              &#x20b9;{" "}
+                              {item.price - (item.offer / 100) * item.price}
+                            </span>
+                            <span className=" line-through">
+                              &#x20b9; {item.price}
+                            </span>
+                          </p>
                         </div>
                       </div>
                     </TableCell>
-                    <TableCell className="flex items-center">
+                    <TableCell className="flex items-center w-fit">
                       <Button
                         className=" !text-xl border border-[#4E1B61] h-10 w-10 rounded-r-none relative left-0.5"
-                        onClick={() => handleDecreaseQuantity(item.id)}
+                        onClick={() => {
+                          if (item.quantity > 1) {
+                            handleDecreaseQuantity(item.id);
+                          }
+                        }}
                       >
                         <MinusIcon />
                       </Button>
@@ -85,15 +118,25 @@ const Cart = () => {
                       />
                       <Button
                         className=" !text-xl border border-[#4E1B61] h-10 w-10 rounded-l-none relative right-0.5"
-                        onClick={() => handleIncreaseQuantity(item.id)}
+                        onClick={() => {
+                          handleIncreaseQuantity(item.id);
+                        }}
                       >
                         <PlusIcon />
                       </Button>
                     </TableCell>
                     <TableCell>
-                      <p className=" font-semibold">
+                      <p className=" font-medium mb-2">
                         ₹ {item.price.toFixed(2)}
                       </p>
+                      <Button
+                        onClick={() => removeFromCartFn(item.id)}
+                        variant="ghost"
+                        className="hover:bg-transparent hover:border-gray-300 border border-gray-300 hover:text-gray-600 text-gray-600 font-normal h-9 text-sm"
+                      >
+                        <Trash2Icon className=" h-4 w-4 mr-1 relative bottom-0.5" />
+                        <span>Remove</span>
+                      </Button>
                     </TableCell>
                   </TableRow>
                 ))}

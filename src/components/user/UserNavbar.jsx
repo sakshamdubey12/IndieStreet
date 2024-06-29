@@ -35,6 +35,14 @@ import {
   NavigationMenuTrigger,
   NavigationMenuViewport,
 } from "@/components/ui/navigation-menu";
+import {
+  Command,
+  CommandEmpty,
+  CommandInput,
+  CommandItem,
+  CommandList,
+} from "@/components/ui/command";
+import { useGetProductsByCategoryQuery } from "@/redux/slices/GetAllProduct";
 import { useGetProductCategoryQuery } from "@/redux/slices/ProductCategorySlice";
 import Image from "next/image";
 import { useSelector } from "react-redux";
@@ -48,10 +56,18 @@ const UserNavbar = () => {
   const [hiddenCategories, setHiddenCategories] = useState([]);
   const containerRef = useRef(null);
   const [windowWidth, setWindowWidth] = useState(window.innerWidth);
+  const [showCommandList, setShowCommandList] = useState(false);
+  const [searchInput, setSearchInput] = useState("");
   const router = useRouter();
-  const { data, error, isLoading } = useGetProductCategoryQuery();
+  const { data } = useGetProductCategoryQuery();
   const cartLength = useSelector((state) => state.cart.length);
   const wishlistLength = useSelector((state) => state.wishlist.length);
+  const {
+    data: products,
+    error,
+    isLoading,
+    refetch,
+  } = useGetProductsByCategoryQuery();
 
   useEffect(() => {
     const authStatus = localStorage.getItem("isAuth") === "true";
@@ -104,6 +120,14 @@ const UserNavbar = () => {
     router.push("/");
   };
 
+  const handleSearchChange = (e) => {
+    setSearchInput(e.target.value.toLowerCase());
+  };
+
+  const filteredProducts = products?.filter((product) =>
+    product.name.toLowerCase().includes(searchInput)
+  );
+
   return (
     <header className="shadow-[0_0_5px_rgba(78,27,97,0.50)] sticky top-0 z-50">
       <nav>
@@ -138,7 +162,7 @@ const UserNavbar = () => {
             <div className="ulcont lg:col-span-2 md:col-span-1 sm:col-span-2 col-span-1 h-full w-full order-2">
               <ul
                 ref={containerRef}
-                className="flex items-center font-medium ml-4 h-full lg:left-0 mx-auto"
+                className="sm:flex hidden items-center font-medium ml-4 h-full lg:left-0 mx-auto"
               >
                 {visibleCategories.map((category) => (
                   <li
@@ -187,21 +211,50 @@ const UserNavbar = () => {
             </div>
             <div
               className={
-                "search h-full lg:col-span-2 md:col-span-1 col-span-6 md:order-3 order-4 w-full flex justify-center items-center"
+                "search h-full lg:col-span-2 md:col-span-1 col-span-6 md:order-3 order-4 w-full flex justify-center items-center relative"
               }
             >
-              <form className=" flex items-center relative w-full">
-                <Input
-                  className="h-10 w-full rounded-xl placeholder:text-[#00000091] text-[#4e1b61] bg-transparent font-medium border-[#4e1b6185] pr-12"
-                  placeholder="Search...."
-                />
-                <Button
-                  className="w-10 h-10 rounded-r-xl rounded-l-none absolute right-0"
-                  size="icon"
-                >
-                  <SearchIcon className="w-5 h-5" />
-                </Button>
-              </form>
+              <Command>
+                <div className="relative w-full md:top-3 sm:mt-0 mt-1">
+                  <CommandInput
+                    placeholder="Search..."
+                    className="w-full"
+                    onFocus={() => setShowCommandList(true)}
+                    onBlur={() =>
+                      setTimeout(() => setShowCommandList(false), 100)
+                    }
+                    onChange={handleSearchChange}
+                  />
+                  {showCommandList && (
+                    <CommandList className="absolute left-0 w-full mt-1 bg-white border border-gray-300 rounded shadow-lg max-h-60 overflow-y-auto z-50 commandlist">
+                      <CommandEmpty>No results found.</CommandEmpty>
+                      {filteredProducts?.map((product) => (
+                        <CommandItem key={product.id} className="px-0 py-0">
+                          <Link
+                            className="block h-full w-full px-3 py-1.5"
+                            href={`/product/${product.name
+                              .toLowerCase()
+                              .replace(" ", "-")}/${product.id}`}
+                            onMouseDown={(e) => {
+                              e.preventDefault();
+                            }}
+                            onClick={() => {
+                              setShowCommandList(false);
+                              router.push(
+                                `/product/${product.name
+                                  .toLowerCase()
+                                  .replace(" ", "-")}/${product.id}`
+                              );
+                            }}
+                          >
+                            {product.name}
+                          </Link>
+                        </CommandItem>
+                      ))}
+                    </CommandList>
+                  )}
+                </div>
+              </Command>
             </div>
             <ul
               className={`flex items-center justify-end md:col-span-1 col-span-3 md:order-4 order-3`}
@@ -298,9 +351,6 @@ const UserNavbar = () => {
                       <DropdownMenuItem onClick={handleLogout}>
                         Logout
                       </DropdownMenuItem>
-                      {/* <DropdownMenuItem>
-                        <Link href="/vendor">Login as Vendor</Link>
-                      </DropdownMenuItem> */}
                     </DropdownMenuContent>
                   </DropdownMenu>
                 ) : (

@@ -19,6 +19,14 @@ body {
 .scroll::-webkit-scrollbar {
   display: none;
 }
+
+.commandlist::-webkit-scrollbar {
+  display: none;
+}
+.commandlist {
+  -ms-overflow-style: none; /* IE and Edge */
+  scrollbar-width: none;
+}
 /* @layer base {
     :root {
       --background: 0 0% 100%;

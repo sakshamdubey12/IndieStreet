@@ -14,6 +14,12 @@ const nextConfig = {
         port: "",
         pathname: "/**",
       },
+      {
+        protocol: "https",
+        hostname: "indiestreet.s3.amazonaws.com",
+        port: "",
+        pathname: "/**",
+      },
     ],
   },
 };

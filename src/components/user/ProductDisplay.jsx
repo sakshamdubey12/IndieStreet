@@ -1,13 +1,19 @@
 import Link from "next/link";
 import Header from "./Header";
-import {
-  Card,
-  CardContent,
-} from "@/components/ui/card";
-
+import { Card, CardContent } from "@/components/ui/card";
+import { useGetProductsByCategoryQuery } from "@/redux/slices/GetAllProduct";
+import ProductCard from "./ProductCard";
 
 const ProductDisplay = ({ title, url }) => {
   const items = ["Item 1", "Item 2", "Item 3", "Item 4", "Item 5", "Item 6"];
+  const { data: products } = useGetProductsByCategoryQuery();
+
+  const filterByCategory = (productList) => {
+    const list = productList?.filter((product) => {
+      return product.categoryName.toUpperCase() === title.toUpperCase();
+    });
+    return list;
+  };
 
   return (
     <section className=" px-[5%] lg:py-16 md:py-12 sm:py-10 py-6 mx-auto max-w-[100rem]">
@@ -21,29 +27,13 @@ const ProductDisplay = ({ title, url }) => {
         </Link>
       </div>
       <div className="grid xl:grid-cols-5 lg:grid-cols-4 md:grid-cols-3 grid-cols-2 gap-2">
-        {items.map((item, index) => (
-          <div
-            key={index}
-            className=" w-full lg:h-60 flex-shrink-0 flex justify-center items-center"
-          >
-            <Card className="h-full w-full">
-              <CardContent className="flex aspect-square items-center justify-center w-full h-full">
-                <div
-                  className="bg-gray-200 rounded-lg p-4 w-full h-full md:text-base sm:text-sm text-xs"
-                  style={{ borderRadius: "10px" }}
-                >
-                  {item}
-                </div>
-              </CardContent>
-            </Card>
-            {/* <div
-              className="bg-gray-200 rounded-lg p-4 w-full h-full"
-              style={{ borderRadius: "10px" }}
-            >
-              {item}
-            </div> */}
-          </div>
-        ))}
+        {filterByCategory(products)
+          ?.slice(0, window.innerWidth >= 1280 ? 5 : 4)
+          .map((product) => (
+            <div className="card-container sm:scale-100 scale-95" key={product.id}>
+              <ProductCard product={product} />
+            </div>
+          ))}
       </div>
     </section>
   );

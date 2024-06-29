@@ -393,18 +393,6 @@ const ProductInfo = ({ params }) => {
                 </div>
               </div>
               <div className="images flex mb-2 text-gray-600">
-                {/* {images.map((image, index) => (
-                  <div
-                    className="img-cont w-20 h-20 overflow-hidden rounded mx-1"
-                    key={index}
-                  >
-                    <img
-                      src={image}
-                      alt=""
-                      className=" object-fill w-20 h-20"
-                    />
-                  </div>
-                ))} */}
               </div>
               <CardDescription className=" text-gray-600">
                 Lorem ipsum dolor sit amet consectetur adipisicing elit.
