@@ -17,7 +17,6 @@ import Image from "next/image";
 export function CarouselSize({ title }) {
   const router = useRouter();
   const { data: categoryData, error, isLoading } = useGetProductCategoryQuery();
-  console.log(categoryData);
   return (
     <section className="px-[5%] lg:py-16 md:py-12 sm:py-10 py-4">
       <div className="category max-w-[100rem] mx-auto">

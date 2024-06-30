@@ -1,9 +1,6 @@
 "use client";
 import Header from "@/components/user/Header";
-import {
-  FilterIcon,
-  SortDescIcon,
-} from "lucide-react";
+import { FilterIcon, SortDescIcon } from "lucide-react";
 import { useEffect, useState } from "react";
 import {
   Select,
@@ -134,18 +131,19 @@ const Products = ({ params }) => {
     setWishlistIDs(ids);
   }, [wishlistItems]);
 
+  console.log(products);
+
   return (
-    <section className="px-[5%] py-16">
+    <section className="px-[5%] py-16 mx-auto max-w-[100rem]">
       <div className="filter flex items-center justify-between mb-4 border-b-2">
         <Header title={productName} />
         <div className="selected"></div>
         <div className="innerfilters pb-2 flex items-center">
           <Sheet>
-            <SheetTrigger className="flex items-center text-[#4E1B61] border px-4 py-2 rounded border-[#4E1B61]">
-              <FilterIcon />
-              <span className=" ml-2">Filter</span>
+            <SheetTrigger className="text-gray-600 py-2 px-2.5 h-10 rounded border bg-gray-200/60 hover:bg-gray-200/60">
+              <FilterIcon className="w-4 h-4" />
             </SheetTrigger>
-            <SheetContent className=" bg-white">
+            <SheetContent className=" bg-white" side="left">
               <SheetHeader>
                 <SheetTitle>Are you absolutely sure?</SheetTitle>
                 <SheetDescription>
@@ -156,22 +154,34 @@ const Products = ({ params }) => {
             </SheetContent>
           </Sheet>
           <Select onValueChange={handleSortChange}>
-            <SelectTrigger className="w-[200px] ml-2 rounded text-[#4E1B61] border border-[#4E1B61]">
-              <SortDescIcon /> <SelectValue placeholder="Sort By" />
+            <SelectTrigger className="w-[150px] ml-2 text-gray-600 py-2 px-2.5 h-10 rounded border border-gray-200 bg-gray-200/60 hover:bg-gray-200/60">
+              <SortDescIcon className="w-5 h-5" /> Sort By
             </SelectTrigger>
-            <SelectContent className=" bg-white">
-              <SelectItem value="title-asc">Title: A to Z</SelectItem>
-              <SelectItem value="title-desc">Title: Z to A</SelectItem>
-              <SelectItem value="price-asc">Price: Low to High</SelectItem>
-              <SelectItem value="price-desc">Price: High to Low</SelectItem>
-              <SelectItem value="relevant">Relevant</SelectItem>
-              <SelectItem value="newest">Newest</SelectItem>
+            <SelectContent className=" bg-white w-[150px]">
+              <SelectItem value="title-asc" className="px-6 text-xs">
+                Title: A to Z
+              </SelectItem>
+              <SelectItem value="title-desc" className="px-6 text-xs">
+                Title: Z to A
+              </SelectItem>
+              <SelectItem value="price-asc" className="px-6 text-xs">
+                Price: Low to High
+              </SelectItem>
+              <SelectItem value="price-desc" className="px-6 text-xs">
+                Price: High to Low
+              </SelectItem>
+              <SelectItem value="relevant" className="px-6 text-xs">
+                Relevant
+              </SelectItem>
+              <SelectItem value="newest" className="px-6 text-xs">
+                Newest
+              </SelectItem>
             </SelectContent>
           </Select>
         </div>
       </div>
 
-      <div className="products-listing grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-2">
+      <div className="products-listing grid grid-cols-1 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-2">
         {isLoading ? (
           <>
             {Array.from({ length: 5 }).map((_, index) => (

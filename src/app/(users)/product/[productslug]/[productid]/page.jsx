@@ -28,6 +28,7 @@ import {
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { usePostReviewMutation } from "@/redux/slices/ProductReview";
+import Image from "next/image";
 
 const ProductInfo = ({ params }) => {
   const [reviewData, setReviewData] = useState({ rating: "", review: "" });
@@ -50,7 +51,7 @@ const ProductInfo = ({ params }) => {
     try {
       await postReview({ reviewData }).unwrap();
       console.log("Review posted successfully!");
-      setReviewData({ rating: "", review: "" }); 
+      setReviewData({ rating: "", review: "" });
     } catch (error) {
       console.error("Failed to post review:", error);
     }
@@ -61,7 +62,7 @@ const ProductInfo = ({ params }) => {
   );
 
   return (
-    <section className="px-[7%] py-14">
+    <section className="px-[7%] py-14 mx-auto max-w-[100rem]">
       {isLoading ? (
         <>
           <div className="animate-pulse">
@@ -195,7 +196,9 @@ const ProductInfo = ({ params }) => {
                       <div className=" m-0 p-0 w-full h-[30rem] left-4 relative">
                         <Card className="m-0 p-0 w-full h-[30rem]">
                           <CardContent className="flex items-center justify-center h-[30rem] overflow-hidden">
-                            <img
+                            <Image
+                            width={1000}
+                            height={1000}
                               src={image}
                               alt=""
                               className=" w-full h-full object-cover rounded-xl"
@@ -357,19 +360,19 @@ const ProductInfo = ({ params }) => {
                         </div>
                       </div>
                       <div className="images flex mb-2 text-gray-600">
-                {images.map((image, index) => (
-                  <div
-                    className="img-cont w-20 h-20 overflow-hidden rounded mx-1"
-                    key={index}
-                  >
-                    <img
-                      src={image}
-                      alt=""
-                      className=" object-fill w-20 h-20"
-                    />
-                  </div>
-                ))}
-              </div>
+                        {images.map((image, index) => (
+                          <div
+                            className="img-cont w-20 h-20 overflow-hidden rounded mx-1"
+                            key={index}
+                          >
+                            <img
+                              src={image}
+                              alt=""
+                              className=" object-fill w-20 h-20"
+                            />
+                          </div>
+                        ))}
+                      </div>
                       <CardDescription className=" text-gray-600">
                         {review.review}
                       </CardDescription>
@@ -378,30 +381,30 @@ const ProductInfo = ({ params }) => {
                 ))}
               </div>
               <div className="review-card shadow-none">
-            <Card className="w-full py-3 px-5">
-              <div className="info flex items-center justify-between mb-3">
-                <div className="user flex items-center">
-                  <Avatar className="mr-2.5">
-                    <AvatarImage src="https://github.com/shadcn.png" />
-                    <AvatarFallback>CN</AvatarFallback>
-                  </Avatar>
-                  <h1 className=" text-lg font-medium">John Doe</h1>
-                </div>
-                <div className="rating flex text-gray-600/95 items-center">
-                  <FaStar className=" mr-1.5 text-yellow-500" />
-                  <span className=" font-semibold mt-0.5">4.5</span>{" "}
-                </div>
+                <Card className="w-full py-3 px-5">
+                  <div className="info flex items-center justify-between mb-3">
+                    <div className="user flex items-center">
+                      <Avatar className="mr-2.5">
+                        <AvatarImage src="https://github.com/shadcn.png" />
+                        <AvatarFallback>CN</AvatarFallback>
+                      </Avatar>
+                      <h1 className=" text-lg font-medium">John Doe</h1>
+                    </div>
+                    <div className="rating flex text-gray-600/95 items-center">
+                      <FaStar className=" mr-1.5 text-yellow-500" />
+                      <span className=" font-semibold mt-0.5">4.5</span>{" "}
+                    </div>
+                  </div>
+                  <div className="images flex mb-2 text-gray-600"></div>
+                  <CardDescription className=" text-gray-600">
+                    Lorem ipsum dolor sit amet consectetur adipisicing elit.
+                    Explicabo dignissimos tenetur ea sed delectus autem
+                    quibusdam! Qui omnis commodi voluptatum laudantium
+                    consequatur fugiat earum est, sint quisquam error eaque
+                    illum.
+                  </CardDescription>
+                </Card>
               </div>
-              <div className="images flex mb-2 text-gray-600">
-              </div>
-              <CardDescription className=" text-gray-600">
-                Lorem ipsum dolor sit amet consectetur adipisicing elit.
-                Explicabo dignissimos tenetur ea sed delectus autem quibusdam!
-                Qui omnis commodi voluptatum laudantium consequatur fugiat earum
-                est, sint quisquam error eaque illum.
-              </CardDescription>
-            </Card>
-          </div>
             </div>
             <div className="Specifications col-span-2 sticky top-28 h-fit">
               <Header title="Product Details" />
