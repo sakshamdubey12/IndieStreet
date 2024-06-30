@@ -16,9 +16,12 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { transformData } from "./transformData";
 
 const handleDownload = (url) => {
-  if (url) {
+ const urlData = transformData(url.original);
+ console.log(urlData); 
+ if (url) {
     const link = document.createElement("a");
     link.href = url;
     link.download = url.split("/").pop() || "download";
@@ -143,20 +146,20 @@ export const columns = [
             <DropdownMenuSeparator />
             <DropdownMenuItem
               onClick={() =>
-                handleDownload(row.original.accountProof, "Account Proof")
+                handleDownload(row, "Account Proof")
               }
             >
               Account Proof
             </DropdownMenuItem>
             <DropdownMenuItem
               onClick={() =>
-                handleDownload(row.original.addressProof, "Address Proof")
+                handleDownload(row, "Address Proof")
               }
             >
               Address Proof
             </DropdownMenuItem>
             <DropdownMenuItem
-              onClick={() => handleDownload(row.original.gstProof, "GST Proof")}
+              onClick={() => handleDownload(row, "GST Proof")}
             >
               GST Proof
             </DropdownMenuItem>

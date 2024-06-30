@@ -7,16 +7,16 @@ import { transformData } from "./vendor-table/transformData";
 
 const Vendor = () => {
   const { data, error} = useGetVendorDetailsQuery();
-  const [vendorDetailsFetched, setVendorDetailsFetched] = useState([]);
 
+  const [vendorDetailsFetched, setVendorDetailsFetched] = useState([]);
   useEffect(() => {
     if (data) {
       setVendorDetailsFetched(data.data);
-      console.log(data.data);
   }
 }, [data]);
-    
 const transformedData = transformData(vendorDetailsFetched);
+console.log(columns);
+console.log(transformedData);
   if (error){return <>Can't get Vendors. Please refresh!</>}
   return (
     <div className="">

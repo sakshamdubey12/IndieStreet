@@ -1,11 +1,10 @@
 // src/components/vendor-table/transformData.ts
-import { VendorDetails } from "./columns";
 
 export const transformData = (data) => {
   return data.map((item) => {
-    const accountProof = item.files[0].url;
-    const addressProof = item.files[1].url;
-    const gstProof = item.files[2].url;
+    const accountProof = item.files[0];
+    const addressProof = item.files[1];
+    const gstProof = item.files[2];
 
     return {
       fullname: item.fullname,
