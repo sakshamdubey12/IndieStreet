@@ -17,7 +17,6 @@ import Image from "next/image";
 export function CarouselSize({ title }) {
   const router = useRouter();
   const { data: categoryData, error, isLoading } = useGetProductCategoryQuery();
-
   return (
     <section className="px-[5%] lg:py-16 md:py-12 sm:py-10 py-4">
       <div className="category max-w-[100rem] mx-auto">
@@ -52,7 +51,11 @@ export function CarouselSize({ title }) {
                         <Image
                           style={{ objectFit: "cover" }}
                           fill
-                          src="https://via.placeholder.com/150"
+                          src={
+                            category.imageUrl
+                              ? category.imageUrl
+                              : "https://via.placeholder.com/150"
+                          }
                           alt={category.categoryName}
                           className="object-cover rounded-xl w-full h-full outline-1 outline-offset-4 outline outline-[#4E1B61]"
                         />

@@ -14,7 +14,6 @@ import {
   MinusIcon,
   PlusIcon,
   ShoppingCartIcon,
-  Trash2,
   Trash2Icon,
 } from "lucide-react";
 import { useSelector, useDispatch } from "react-redux";
@@ -45,7 +44,8 @@ const Cart = () => {
   };
 
   const subtotal = cartItems.reduce(
-    (acc, item) => acc + item.price * item.quantity,
+    (acc, item) =>
+      acc + (item.price - (item.offer / 100) * item.price) * item.quantity,
     0
   );
 
@@ -54,7 +54,7 @@ const Cart = () => {
       <div className="cart-items col-span-2">
         {cartItems.length > 0 ? (
           <>
-            <div className="cart-header flex justify-between items-center">
+            <div className="cart-header flex justify-between items-center mb-3">
               <Header title="Cart" />
               <Button onClick={handleClear}>Clear Cart</Button>
             </div>
@@ -62,84 +62,89 @@ const Cart = () => {
             <Table>
               <TableHeader>
                 <TableRow className="text-gray-600 uppercase">
-                  <TableHead>Product</TableHead>
-                  <TableHead>Quantity</TableHead>
-                  <TableHead>Total Price</TableHead>
+                  <TableHead className="text-left">Product</TableHead>
+                  <TableHead className="text-center max-w-36 w-36">Quantity</TableHead>
+                  <TableHead className="text-right">Total Price</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {cartItems.map((item) => (
-                  <TableRow key={item.id} className=" py-1 px-10">
-                    <TableCell>
-                      <div className="flex items-start">
-                        <Image
-                          width={1000}
-                          height={1000}
-                          src={item.images[0]}
-                          alt={item.name}
-                          className="w-16 h-16 mr-4"
-                        />
-                        <div className="">
-                          <Link
-                            href={`/product/${item.name
-                              .toLowerCase()
-                              .replace(" ", "-")}/${item.id}`}
-                            className="font-semibold mb-1.5"
-                          >
-                            {item.name}
-                          </Link>
-                          <p className=" text-sm">
-                            <span className="text-red-600 mr-2 font-medium">
-                              &#x20b9;{" "}
-                              {item.price - (item.offer / 100) * item.price}
-                            </span>
-                            <span className=" line-through">
-                              &#x20b9; {item.price}
-                            </span>
-                          </p>
+                {cartItems.map((item) => {
+                  const totalPrice =
+                    (item.price - (item.offer / 100) * item.price) *
+                    item.quantity;
+                  return (
+                    <TableRow key={item.id} className=" py-1 px-10">
+                      <TableCell>
+                        <div className="flex items-start">
+                          <Image
+                            width={1000}
+                            height={1000}
+                            src={item.images[0]}
+                            alt={item.name}
+                            className="w-16 h-16 mr-4"
+                          />
+                          <div className="">
+                            <Link
+                              href={`/product/${item.name
+                                .toLowerCase()
+                                .replace(" ", "-")}/${item.id}`}
+                              className="font-semibold mb-1.5"
+                            >
+                              {item.name}
+                            </Link>
+                            <p className=" text-sm">
+                              <span className="text-red-600 mr-2 font-medium">
+                                &#x20b9;{" "}
+                                {item.price - (item.offer / 100) * item.price}
+                              </span>
+                              <span className=" line-through">
+                                &#x20b9; {item.price}
+                              </span>
+                            </p>
+                          </div>
                         </div>
-                      </div>
-                    </TableCell>
-                    <TableCell className="flex items-center w-fit">
-                      <Button
-                        className=" !text-xl border border-[#4E1B61] h-10 w-10 rounded-r-none relative left-0.5"
-                        onClick={() => {
-                          if (item.quantity > 1) {
-                            handleDecreaseQuantity(item.id);
-                          }
-                        }}
-                      >
-                        <MinusIcon />
-                      </Button>
-                      <Input
-                        value={item.quantity}
-                        readOnly
-                        className="text-center w-12 rounded-none"
-                      />
-                      <Button
-                        className=" !text-xl border border-[#4E1B61] h-10 w-10 rounded-l-none relative right-0.5"
-                        onClick={() => {
-                          handleIncreaseQuantity(item.id);
-                        }}
-                      >
-                        <PlusIcon />
-                      </Button>
-                    </TableCell>
-                    <TableCell>
-                      <p className=" font-medium mb-2">
-                        ₹ {item.price.toFixed(2)}
-                      </p>
-                      <Button
-                        onClick={() => removeFromCartFn(item.id)}
-                        variant="ghost"
-                        className="hover:bg-transparent hover:border-gray-300 border border-gray-300 hover:text-gray-600 text-gray-600 font-normal h-9 text-sm"
-                      >
-                        <Trash2Icon className=" h-4 w-4 mr-1 relative bottom-0.5" />
-                        <span>Remove</span>
-                      </Button>
-                    </TableCell>
-                  </TableRow>
-                ))}
+                      </TableCell>
+                      <TableCell className="flex items-center max-w-36">
+                        <Button
+                          className=" !text-xl border border-[#4E1B61] h-10 w-10 rounded-r-none relative left-0.5"
+                          onClick={() => {
+                            if (item.quantity > 1) {
+                              handleDecreaseQuantity(item.id);
+                            }
+                          }}
+                        >
+                          <MinusIcon />
+                        </Button>
+                        <Input
+                          value={item.quantity}
+                          readOnly
+                          className="text-center w-12 rounded-none"
+                        />
+                        <Button
+                          className=" !text-xl border border-[#4E1B61] h-10 w-10 rounded-l-none relative right-0.5"
+                          onClick={() => {
+                            handleIncreaseQuantity(item.id);
+                          }}
+                        >
+                          <PlusIcon />
+                        </Button>
+                      </TableCell>
+                      <TableCell className="">
+                        <p className=" font-medium mb-2 text-right">
+                          ₹ {totalPrice.toFixed(2)}
+                        </p>
+                        <Button
+                          onClick={() => removeFromCartFn(item.id)}
+                          variant="ghost"
+                          className="hover:bg-transparent hover:border-gray-300 border border-gray-300 hover:text-gray-600 text-gray-600 font-normal h-9 text-sm relative float-right"
+                        >
+                          <Trash2Icon className=" h-4 w-4 mr-1 relative bottom-0.5" />
+                          <span>Remove</span>
+                        </Button>
+                      </TableCell>
+                    </TableRow>
+                  );
+                })}
               </TableBody>
             </Table>
           </>
@@ -156,23 +161,23 @@ const Cart = () => {
       </div>
       <div className="mt-4 p-4 border border-gray-200 rounded col-span-1 sticky top-32 h-fit">
         <div className="flex justify-between mb-2">
-          <p>Subtotal:</p>
+          <p className="font-medium">Subtotal:</p>
           <p>₹ {subtotal.toFixed(2)}</p>
         </div>
         <div className="flex justify-between mb-2">
-          <p>Discount:</p>
+          <p className="font-medium">Discount:</p>
           <p>₹ 0</p>
         </div>
         <div className="flex justify-between mb-2">
-          <p>IGST:</p>
+          <p className="font-medium">IGST:</p>
           <p>₹ 0</p>
         </div>
         <div className="flex justify-between mb-2">
-          <p>CGST:</p>
+          <p className="font-medium">CGST:</p>
           <p>₹ 0</p>
         </div>
         <div className="flex justify-between mb-2">
-          <p>Total Including GST:</p>
+          <p className="font-medium">Total Including GST:</p>
           <p>₹ {subtotal.toFixed(2)}</p>
         </div>
         <Button className="w-full rounded -mt-0.5" size="lg">

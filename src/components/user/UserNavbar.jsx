@@ -162,18 +162,18 @@ const UserNavbar = () => {
             <div className="ulcont lg:col-span-2 md:col-span-1 sm:col-span-2 col-span-1 h-full w-full order-2">
               <ul
                 ref={containerRef}
-                className="sm:flex hidden items-center font-medium ml-4 h-full lg:left-0 mx-auto"
+                className="sm:flex hidden items-center font-medium text-sm ml-4 h-full lg:left-0 mx-auto"
               >
                 {visibleCategories.map((category) => (
                   <li
                     key={category._id}
-                    className="h-16 w-fit relative after:absolute after:rounded-t-xl after:w-full after:h-1 after:bg-[#4E1B61] after:-bottom-0.5 after:left-0 after:opacity-0 hover:after:opacity-100 after:ease-in-out after:duration-300 after:transition-all"
+                    className="h-16 w-max relative after:absolute after:rounded-t-xl after:w-full after:h-1 after:bg-[#4E1B61] after:-bottom-0.5 after:left-0 after:opacity-0 hover:after:opacity-100 after:ease-in-out after:duration-300 after:transition-all"
                   >
                     <Link
                       href={`/category/${category.categoryName
                         .toLowerCase()
                         .replace(" ", "-")}/${category._id}`}
-                      className="px-2 h-full flex justify-center items-center"
+                      className="px-2 h-full flex justify-center items-center text-center"
                     >
                       {category.categoryName}
                     </Link>

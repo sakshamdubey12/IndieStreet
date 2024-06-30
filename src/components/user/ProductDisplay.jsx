@@ -10,7 +10,7 @@ const ProductDisplay = ({ title, url }) => {
 
   const filterByCategory = (productList) => {
     const list = productList?.filter((product) => {
-      return product.categoryName.toUpperCase() === title.toUpperCase();
+      return product.categoryName.toUpperCase() === title?.toUpperCase();
     });
     return list;
   };

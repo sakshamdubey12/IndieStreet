@@ -18,6 +18,7 @@ import {
 import { addToCart, removeFromCart } from "@/redux/slices/cartSlice";
 import { useSelector, useDispatch } from "react-redux";
 import { useEffect, useState } from "react";
+import Image from "next/image";
 
 const ProductCard = ({ product }) => {
   const dispatch = useDispatch();
@@ -58,18 +59,22 @@ const ProductCard = ({ product }) => {
           <button
             onClick={handleWishlistClick}
             className={
-              (isInWishlist ? "bg-[#4E1B61] text-white" : "bg-white/90 text-[#4E1B61]") +
+              (isInWishlist
+                ? "bg-gray-200/60 text-gray-600"
+                : "bg-gray-200/60 text-gray-600") +
               "  w-10 h-10 rounded-full text-sm font-medium grid place-items-center relative"
             }
           >
             {isInWishlist ? (
               <IoHeartDislikeSharp className="w-5 h-5 absolute" />
             ) : (
-              <HeartIcon fill="#4E1B61" className="w-5 h-5 absolute" />
+              <HeartIcon fill="#4b5563" className="w-5 h-5 absolute" />
             )}
           </button>
         </div>
-        <img
+        <Image
+          width={1000}
+          height={1000}
           src={product.images[0]}
           alt={product.name}
           className="w-full h-52 object-cover rounded-lg"
