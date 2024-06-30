@@ -16,7 +16,7 @@ const nextConfig = {
       },
       {
         protocol: "https",
-        hostname: "indiestreet.s3.amazonaws.com",
+        hostname: "indiestreet.s3.ap-south-1.amazonaws.com",
         port: "",
         pathname: "/**",
       },
