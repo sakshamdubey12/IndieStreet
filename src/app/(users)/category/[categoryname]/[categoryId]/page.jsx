@@ -136,7 +136,7 @@ const Products = ({ params }) => {
   return (
     <section className="px-[5%] py-16 mx-auto max-w-[100rem]">
       <div className="filter flex items-center justify-between mb-4 border-b-2">
-        <Header title={productName} />
+        <Header title={productName} className="block" />
         <div className="selected"></div>
         <div className="innerfilters pb-2 flex items-center">
           <Sheet>
@@ -181,7 +181,7 @@ const Products = ({ params }) => {
         </div>
       </div>
 
-      <div className="products-listing grid grid-cols-1 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-2">
+      <div className="products-listing grid grid-cols-1 xs:grid-col-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 sm:gap-2 gap-1">
         {isLoading ? (
           <>
             {Array.from({ length: 5 }).map((_, index) => (

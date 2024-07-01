@@ -7,25 +7,28 @@ export async function middleware(req) {
   if (!token) {
     return NextResponse.redirect(new URL("/auth", req.url));
   }
+
   try {
     const decoded = jwt.decode(token, process.env.NEXT_PUBLIC_JWT_SECRET);
-    const url = req.nextUrl.clone();
+
     if (decoded.role === "admin") {
-      if (url.pathname.includes("vendor")&& !url.pathname.includes("admin/vendor")) {
+      if (req.nextUrl.pathname.includes("vendor") && !req.nextUrl.pathname.includes("admin/vendor")) {
         return NextResponse.redirect(new URL("/admin", req.url));
       }
       return NextResponse.next();
     } else if (decoded.role === "vendor") {
-      if (url.pathname.includes("admin")) {
+      if (req.nextUrl.pathname.includes("admin")) {
         return NextResponse.redirect(new URL("/vendor", req.url));
       }
       return NextResponse.next();
     } else if (decoded.role === "user") {
-      if (url.pathname.includes("admin") || url.pathname.includes("vendor")) {
+      if (req.nextUrl.pathname.includes("admin") || req.nextUrl.pathname.includes("vendor")) {
         return NextResponse.redirect(new URL("/", req.url));
       }
       return NextResponse.next();
-    } else return NextResponse.redirect(new URL("/", req.url));
+    } else {
+      return NextResponse.redirect(new URL("/", req.url));
+    }
   } catch (error) {
     return NextResponse.error(error);
   }

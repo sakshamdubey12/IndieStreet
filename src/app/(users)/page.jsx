@@ -9,7 +9,7 @@ import React, { useEffect } from "react";
 import { useGetProductCategoryQuery } from "@/redux/slices/ProductCategorySlice";
 
 const Home = () => {
-  const { data, error, isLoading } = useGetProductCategoryQuery();
+  const { data } = useGetProductCategoryQuery();
   return (
     <>
       <BannerCarousel />

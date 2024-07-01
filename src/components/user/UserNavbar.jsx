@@ -62,12 +62,7 @@ const UserNavbar = () => {
   const { data } = useGetProductCategoryQuery();
   const cartLength = useSelector((state) => state.cart.length);
   const wishlistLength = useSelector((state) => state.wishlist.length);
-  const {
-    data: products,
-    error,
-    isLoading,
-    refetch,
-  } = useGetProductsByCategoryQuery();
+  const { data: products } = useGetProductsByCategoryQuery();
 
   useEffect(() => {
     const authStatus = localStorage.getItem("isAuth") === "true";
@@ -141,12 +136,12 @@ const UserNavbar = () => {
         <div
           className={
             (lastScroll > 104
-              ? "bg-[#ffffff8b] backdrop-blur md:py-1 pb-1 pt-0.5"
-              : "bg-white md:py-2 pb-2 pt-1") +
+              ? "bg-[#ffffff8b] backdrop-blur md:py-1 pt-0.5"
+              : "bg-white md:py-2 py-1") +
             ` !px-[5%] lower text-[#4E1B61] transition-all ease-in-out duration-200`
           }
         >
-          <div className="grid lg:grid-cols-6 md:grid-cols-4 grid-cols-6 !max-w-[100rem] !mx-auto lg:gap-3 md:gap-2 gap-0">
+          <div className="grid lg:grid-cols-7 md:grid-cols-4 grid-cols-6 !max-w-[100rem] !mx-auto lg:gap-3 md:gap-1 gap-0">
             <div className="logo font-semibold transition-all ease-in-out duration-200 sm:col-span-1 col-span-2 order-1 w-full h-full flex items-center justify-center">
               <Link href="/" className="">
                 <Image
@@ -154,12 +149,12 @@ const UserNavbar = () => {
                   width={1000}
                   height={1000}
                   style={{ objectFit: "cover" }}
-                  className=" w-full h-full xl:px-5"
+                  className="xl:px-5 h-full w-full max-w-52 max-h-16"
                   alt=""
                 />
               </Link>
             </div>
-            <div className="ulcont lg:col-span-2 md:col-span-1 sm:col-span-2 col-span-1 h-full w-full order-2">
+            <div className="ulcont lg:col-span-3 md:col-span-1 sm:col-span-3 col-span-3 h-full w-full order-2">
               <ul
                 ref={containerRef}
                 className="sm:flex hidden items-center font-medium text-sm ml-4 h-full lg:left-0 mx-auto"
@@ -167,7 +162,7 @@ const UserNavbar = () => {
                 {visibleCategories.map((category) => (
                   <li
                     key={category._id}
-                    className="h-16 w-max relative after:absolute after:rounded-t-xl after:w-full after:h-1 after:bg-[#4E1B61] after:-bottom-0.5 after:left-0 after:opacity-0 hover:after:opacity-100 after:ease-in-out after:duration-300 after:transition-all"
+                    className="h-16 w-max relative after:absolute after:rounded-t-xl after:w-0 after:h-1 after:bg-[#4E1B61] after:-bottom-2 after:left-0 hover:after:w-full after:ease-in-out after:duration-300 after:transition-all"
                   >
                     <Link
                       href={`/category/${category.categoryName
@@ -211,14 +206,14 @@ const UserNavbar = () => {
             </div>
             <div
               className={
-                "search h-full lg:col-span-2 md:col-span-1 col-span-6 md:order-3 order-4 w-full flex justify-center items-center relative"
+                "search h-full lg:col-span-2 md:col-span-1 col-span-7 md:order-3 order-4 w-full flex justify-center items-center relative"
               }
             >
               <Command>
-                <div className="relative w-full md:top-3 sm:mt-0 mt-1">
+                <div className="relative w-full md:top-3 sm:mt-0 mt-1 xl:w-full lg:w-[80%]">
                   <CommandInput
                     placeholder="Search..."
-                    className="w-full"
+                    className="xl:w-full"
                     onFocus={() => setShowCommandList(true)}
                     onBlur={() =>
                       setTimeout(() => setShowCommandList(false), 100)
@@ -257,7 +252,7 @@ const UserNavbar = () => {
               </Command>
             </div>
             <ul
-              className={`flex items-center justify-end md:col-span-1 col-span-3 md:order-4 order-3`}
+              className={`flex items-center justify-end md:col-span-1 sm:col-span-2 col-span-1 md:order-4 order-3`}
             >
               <li
                 className={
@@ -290,7 +285,7 @@ const UserNavbar = () => {
                       </Link>
                     </TooltipTrigger>
                     <TooltipContent className=" bg-white">
-                      <p className=" text-xs">Wishlist</p>
+                      <p className="text-xs">Wishlist</p>
                     </TooltipContent>
                   </Tooltip>
                 </TooltipProvider>
@@ -331,7 +326,7 @@ const UserNavbar = () => {
                   </Tooltip>
                 </TooltipProvider>
               </li>
-              <li className={"flex justify-center items-center ml-2"}>
+              <li className={"flex justify-center items-center"}>
                 {isAuth ? (
                   <DropdownMenu>
                     <DropdownMenuTrigger
@@ -342,7 +337,7 @@ const UserNavbar = () => {
                     >
                       <User2Icon
                         fill="#4E1B61"
-                        className=" sm:w-5 sm:h-5 w-3.5 h-3.5  "
+                        className=" sm:w-5 sm:h-5 w-3.5 h-3.5"
                       />
                     </DropdownMenuTrigger>
                     <DropdownMenuContent className=" bg-white sm:text-sm text-xs w-44">
@@ -360,7 +355,7 @@ const UserNavbar = () => {
                       (lastScroll > 104
                         ? "bg-[#4E1B61] text-white "
                         : "bg-transparent ") +
-                      "lg:ml-2 text-[#4E1B61] px-5 py-2 rounded sm:text-sm text-xs ease-in-out transition-all duration-150 border border-[#4E1B61] font-medium"
+                      "lg:ml-2 text-[#4E1B61] px-5 py-2 my-auto rounded sm:text-sm text-xs ease-in-out transition-all duration-150 border border-[#4E1B61] font-medium"
                     }
                   >
                     Login
