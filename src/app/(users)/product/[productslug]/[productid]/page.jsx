@@ -1,6 +1,6 @@
 "use client";
 import React, { useState, useEffect } from "react";
-import { ArrowLeft, ArrowRight, HeartIcon } from "lucide-react";
+import { ArrowLeft, ArrowRight, HeartIcon, Trash2 } from "lucide-react";
 import Header from "@/components/user/Header";
 import {
   Carousel,
@@ -28,9 +28,21 @@ import {
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { usePostReviewMutation } from "@/redux/slices/ProductReview";
+import {
+  addToWishlist,
+  removeFromWishlist,
+} from "@/redux/slices/wishlistSlice";
+import { addToCart, removeFromCart } from "@/redux/slices/cartSlice";
+import { useSelector, useDispatch } from "react-redux";
 import Image from "next/image";
+import { IoHeartDislikeSharp } from "react-icons/io5";
 
 const ProductInfo = ({ params }) => {
+  const dispatch = useDispatch();
+  const wishlist = useSelector((state) => state.wishlist);
+  const [isInWishlist, setIsInWishlist] = useState(false);
+  const cart = useSelector((state) => state.cart);
+  const [isInCart, setIsInCart] = useState(false);
   const [reviewData, setReviewData] = useState({ rating: "", review: "" });
   const [postReview, { isLoading: reviewLoading, isSuccess, isError }] =
     usePostReviewMutation();
@@ -60,6 +72,33 @@ const ProductInfo = ({ params }) => {
   const { data, error, isLoading, refetch } = useGetProductsByIDQuery(
     params.productid
   );
+
+  useEffect(() => {
+    const isInWishlist = wishlist.some(
+      (item) => item.id === data?.response?.id
+    );
+    setIsInWishlist(isInWishlist);
+    const isInCart = cart.some((item) => item.id === data?.response?.id);
+    setIsInCart(isInCart);
+  }, [wishlist, cart]);
+
+  const handleWishlistClick = () => {
+    if (isInWishlist) {
+      dispatch(removeFromWishlist(data?.response));
+    } else {
+      dispatch(addToWishlist(data?.response));
+    }
+    setIsInWishlist(!isInWishlist);
+  };
+
+  const handleCartClick = () => {
+    if (isInCart) {
+      dispatch(removeFromCart(data?.response));
+    } else {
+      dispatch(addToCart(data?.response));
+    }
+    setIsInCart(!isInCart);
+  };
 
   return (
     <section className="px-[7%] py-14 mx-auto max-w-[100rem]">
@@ -181,8 +220,8 @@ const ProductInfo = ({ params }) => {
         </>
       ) : (
         <>
-          <div className="product-info grid grid-cols-4 gap-10 mb-16 relative">
-            <div className="img col-span-2 flex justify-between items-center sticky top-32 h-fit">
+          <div className="product-info grid lg:grid-cols-4 grid-cols-1 gap-10 mb-16 relative">
+            <div className="img col-span-2 flex justify-between items-center lg:sticky top-32 h-fit">
               <Carousel className="w-[80%] mx-auto">
                 <CarouselContent className="w-full">
                   {data?.response?.images.map((image, index) => (
@@ -190,15 +229,15 @@ const ProductInfo = ({ params }) => {
                       key={index}
                       className={
                         (index === 0 ? "" : " left-4 ") +
-                        `min-w-full h-[30rem] p-0 m-0 relative`
+                        `lg:min-w-full max-w-[500px] lg:h-[30rem] md:h-[500px] sm:h-[400px] h-[250px] p-0 m-0 relative`
                       }
                     >
-                      <div className=" m-0 p-0 w-full h-[30rem] left-4 relative">
-                        <Card className="m-0 p-0 w-full h-[30rem]">
-                          <CardContent className="flex items-center justify-center h-[30rem] overflow-hidden">
+                      <div className=" m-0 p-0 lg:min-w-full max-w-[500px] lg:h-[30rem] md:h-[500px] sm:h-[400px] h-[250px]  left-4 relative">
+                        <Card className="m-0 p-0 lg:min-w-full max-w-[500px] lg:h-[30rem] md:h-[500px] sm:h-[400px] h-[250px]">
+                          <CardContent className="flex items-center justify-center lg:h-[30rem] md:h-[500px] sm:h-[400px] h-[250px] overflow-hidden">
                             <Image
-                            width={1000}
-                            height={1000}
+                              width={1000}
+                              height={1000}
                               src={image}
                               alt=""
                               className=" w-full h-full object-cover rounded-xl"
@@ -209,16 +248,28 @@ const ProductInfo = ({ params }) => {
                     </CarouselItem>
                   ))}
                 </CarouselContent>
-                <CarouselPrevious className="p-3 border border-[#4e1b618a] text-[#4e1b61] rounded-full -left-16" />
-                <CarouselNext className="p-3 border border-[#4e1b618a] text-[#4e1b61] rounded-full -right-16" />
+                <CarouselPrevious className="p-3 border border-[#4e1b618a] text-[#4e1b61] rounded-full lg:-left-16 -left-10" />
+                <CarouselNext className="p-3 border border-[#4e1b618a] text-[#4e1b61] rounded-full lg:-right-16 -right-10" />
               </Carousel>
             </div>
             <div className="description col-span-2 flex flex-col justify-between">
               <div className="upper">
                 <div className="flex items-center justify-between mb-3">
                   <Header title={data?.response?.name} className="text-3xl" />
-                  <button className="p-3 rounded-full text-sm hover:bg-[#4E1B61] hover:text-white duration-150 ease-in-out transition-all mb-2">
-                    <HeartIcon className=" w-5 h-5" />
+                  <button
+                    onClick={handleWishlistClick}
+                    className={
+                      (isInWishlist
+                        ? "bg-gray-200/60 text-gray-600"
+                        : "bg-gray-200/60 text-gray-600") +
+                      "  w-10 h-10 rounded-full text-sm font-medium grid place-items-center relative"
+                    }
+                  >
+                    {isInWishlist ? (
+                      <IoHeartDislikeSharp className="w-5 h-5 absolute" />
+                    ) : (
+                      <HeartIcon fill="#4b5563" className="w-5 h-5 absolute" />
+                    )}
                   </button>
                 </div>
                 <div className="combine flex items-center mb-1">
@@ -231,7 +282,10 @@ const ProductInfo = ({ params }) => {
                   <span className=" bg-gray-600/70 w-0.5 h-7 block mx-5 rounded-full"></span>
                   <div className="review flex items-center text-gray-600/95">
                     <span className=" mr-1 font-semibold mt-0.5">
-                      {data?.response?.reviews?.length} Reviews
+                      {data?.response?.reviews?.length > 0
+                        ? data?.response?.reviews?.length
+                        : 0}{" "}
+                      Reviews
                     </span>
                   </div>
                 </div>
@@ -247,11 +301,26 @@ const ProductInfo = ({ params }) => {
                   <span className=" text-lg line-through text-gray-600 mr-2">
                     ₹ {data?.response?.price}
                   </span>
-                  {/* <span className="">10% Off</span> */}
                 </div>
                 <div className="cta w-full flex mb-5">
-                  <Button className="bg-white text-gray-600 border w-1/2 py-4 mr-2">
-                    Add to Cart
+                  <Button
+                    onClick={handleCartClick}
+                    variant="ghost"
+                    className={
+                      (isInCart
+                        ? "bg-[#cef52044] hover:bg-[#cef52044] "
+                        : "bg-gray-200/60 hover:bg-gray-200/60 ") +
+                      "w-1/2 !text-sm hover:border-0 border-0 hover:text-gray-600 text-gray-600 mr-2 py-2.5 rounded"
+                    }
+                  >
+                    {isInCart ? (
+                      <>
+                        <Trash2 className="w-4 h-4 mr-1 relative bottom-0.5" />{" "}
+                        <span>Remove</span>
+                      </>
+                    ) : (
+                      "Add to Cart"
+                    )}
                   </Button>
                   <Button className="w-1/2 py-4 ml-2">Buy Now</Button>
                 </div>
@@ -270,6 +339,8 @@ const ProductInfo = ({ params }) => {
                               <Input
                                 placeholder="000000"
                                 className=" -ml-0.5 h-11 w-20"
+                                minLength="6"
+                                maxLength="6"
                               />
                             </form>
                           </div>
@@ -293,7 +364,7 @@ const ProductInfo = ({ params }) => {
               </div>
             </div>
           </div>
-          <div className="review-specs grid grid-cols-4 gap-10 relative">
+          <div className="review-specs grid lg:grid-cols-4 grid-cols-1 gap-10 relative">
             <div className="review col-span-2 sticky top-28 h-fit">
               <div className="post-review mb-5 flex items-center justify-between">
                 <Header title="Customer Reviews" />
@@ -365,7 +436,9 @@ const ProductInfo = ({ params }) => {
                             className="img-cont w-20 h-20 overflow-hidden rounded mx-1"
                             key={index}
                           >
-                            <img
+                            <Image
+                              width={1000}
+                              height={1000}
                               src={image}
                               alt=""
                               className=" object-fill w-20 h-20"
@@ -406,7 +479,7 @@ const ProductInfo = ({ params }) => {
                 </Card>
               </div>
             </div>
-            <div className="Specifications col-span-2 sticky top-28 h-fit">
+            <div className="Specifications col-span-2 lg:sticky top-28 h-fit">
               <Header title="Product Details" />
               <div className="spec-cont w-full">
                 <Table className="w-full text-gray-600">

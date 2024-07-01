@@ -7,7 +7,7 @@ export const metadata = {
 
 export default function AdminLayout({ children }) {
   return (
-    <main className=" flex">
+    <main className="flex max-w-[100rem] mx-auto">
       <SideNavbar />
       {children}
     </main>

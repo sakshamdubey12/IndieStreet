@@ -1,27 +1,16 @@
 "use client";
-
-// import { Button } from "@/components/ui/button";
-// import { ColumnDef } from "@tanstack/react-table";
-import {
-  ArrowUpDown,
-  CheckCircle2Icon,
-  CheckIcon,
-  DownloadIcon,
-} from "lucide-react";
+import { ArrowUpDown, CheckCircle2Icon } from "lucide-react";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
-  DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { transformData } from "./transformData";
 
 const handleDownload = (url) => {
- const urlData = transformData(url.original);
- console.log(urlData); 
- if (url) {
+  console.log(url);
+  if (url) {
     const link = document.createElement("a");
     link.href = url;
     link.download = url.split("/").pop() || "download";
@@ -144,24 +133,17 @@ export const columns = [
           <DropdownMenuTrigger className=" py-2">Documents</DropdownMenuTrigger>
           <DropdownMenuContent className="bg-white">
             <DropdownMenuSeparator />
-            <DropdownMenuItem
-              onClick={() =>
-                handleDownload(row, "Account Proof")
-              }
-            >
-              Account Proof
+            <DropdownMenuItem>
+              <a href={row.original.accountProof} download target="_blank">
+                {" "}
+                Account Proof
+              </a>
             </DropdownMenuItem>
-            <DropdownMenuItem
-              onClick={() =>
-                handleDownload(row, "Address Proof")
-              }
-            >
-              Address Proof
+            <DropdownMenuItem>
+              <a href={row.original.addressProof}>Address Proof</a>
             </DropdownMenuItem>
-            <DropdownMenuItem
-              onClick={() => handleDownload(row, "GST Proof")}
-            >
-              GST Proof
+            <DropdownMenuItem>
+              <a href={row.original.gstProof}>GST Proof</a>
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
