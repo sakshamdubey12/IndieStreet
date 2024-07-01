@@ -22,6 +22,9 @@ import { Label } from "../ui/label";
 import { Input } from "../ui/input";
 import { Textarea } from "../ui/textarea";
 import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue } from "../ui/select";
+import { BsTrash } from "react-icons/bs";
+import { MdCancel } from "react-icons/md";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "../ui/tooltip";
 
 const DisplayTable = () => {
   const { data, error, isLoading, refetch } = useGetAllProductsQuery();
@@ -63,6 +66,7 @@ const DisplayTable = () => {
             <TableHead>Price</TableHead>
             <TableHead>Offer</TableHead>
             <TableHead>Offer Price</TableHead>
+            <TableHead>Actions </TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
@@ -74,6 +78,29 @@ const DisplayTable = () => {
               <TableCell>{product.price}</TableCell>
               <TableCell>{product.offer}</TableCell>
               <TableCell>{product.offeredPrice}</TableCell>
+              <TableCell> 
+               <TooltipProvider>
+      <Tooltip>
+        <TooltipTrigger asChild>
+          <Button ><BsTrash/> </Button>
+        </TooltipTrigger>
+        <TooltipContent className="bg-[#f3f3f3]">
+          <p >Delete item permanently </p>
+        </TooltipContent>
+      </Tooltip>
+    </TooltipProvider>
+               <TooltipProvider >
+      <Tooltip>
+        <TooltipTrigger asChild>
+          <Button className="mx-3"><MdCancel />
+          </Button>
+        </TooltipTrigger>
+        <TooltipContent className="bg-[#f3f3f3]">
+          <p >Inactive the product </p>
+        </TooltipContent>
+      </Tooltip>
+    </TooltipProvider>
+    </TableCell>
               <TableCell>
                 <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
                   <Button onClick={() => handleViewDetail(product)}>

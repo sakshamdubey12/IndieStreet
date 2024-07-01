@@ -1,5 +1,4 @@
 // src/components/vendor-table/transformData.ts
-import { VendorDetails } from "./columns";
 
 export const transformData = (data) => {
   return data?.map((item) => {

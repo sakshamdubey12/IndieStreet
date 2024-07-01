@@ -71,7 +71,7 @@ function VendorNavbar({}) {
           },
           {
             title: "Settings",
-            href: "/",
+            href: "/vendor/account-settings",
             icon: Settings,
             variant: "ghost",
             segment: null

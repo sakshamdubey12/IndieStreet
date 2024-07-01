@@ -1,4 +1,3 @@
-// src/components/VendorRegister.jsx
 "use client";
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
@@ -7,9 +6,9 @@ import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import { useDispatch } from "react-redux";
-import { useRegisterVendorMutation } from "@/redux/slices/authSlice";
 import Link from "next/link";
+import { vendorSignup } from "@/redux/slices/vendorSlice";
+import { useDispatch } from "react-redux";
 
 const VendorRegister = () => {
   const [formData, setFormData] = useState({
@@ -28,11 +27,9 @@ const VendorRegister = () => {
   });
   const [categories, setCategories] = useState([]);
   const [errors, setErrors] = useState({});
-  const [registerVendor, { isLoading }] = useRegisterVendorMutation();
 
-  const dispatch = useDispatch();
   const router = useRouter();
-
+const dispatch = useDispatch()
   useEffect(() => {
     const fetchCategories = async () => {
       try {
@@ -95,24 +92,14 @@ const VendorRegister = () => {
       setErrors(validationErrors);
       return;
     }
-    const submitFormData = new FormData();
-    Object.keys(formData).forEach((key) => {
-      submitFormData.append(key, formData[key]);
-    });
     try {
-      console.log(submitFormData);
-      const response = await registerVendor(submitFormData).unwrap();
-      console.log(response);
-      toast.success(response.message);
-
-      // Persist user data and auth status using redux reducer
-      // dispatch(setCredentials({ user: response.user, token: response.token }));
-
-      // Redirect based on user role
+      console.log(formData);
+    const resp =   dispatch(vendorSignup(formData));
+console.log(resp);
       router.push("/vendor/dashboard");
     } catch (err) {
       console.log(err);
-      toast.error(err.data.message || "Registration failed");
+      toast.error(err.message || "Registration failed");
     }
   };
 
@@ -301,93 +288,90 @@ const VendorRegister = () => {
                 onChange={handleInputChange}
               />
               {errors.confirmPassword && (
-                <p className="text-xs text-red-500">{errors.confirmPassword}</p>
-              )}
-            </div>
-            <div className="element sm:mb-3 mb-1">
-              <Label htmlFor="gstDoc" className=" sm:text-base text-xs">
-                Upload GST Document
-              </Label>
-              <Input
-                type="file"
-                name="gstDoc"
-                className={`outline-none mt-0.5 rounded `}
-                onChange={handleFileChange}
-              />
-              {formData.gstDoc && (
-                <img
-                  src={getPreviewUrl(formData.gstDoc)}
-                  alt="GST Document Preview"
-                  className="mt-2 h-20"
-                />
-              )}
-              {errors.gstDoc && (
-                <p className="text-xs text-red-500">{errors.gstDoc}</p>
-              )}
-            </div>
-            <div className="element sm:mb-3 mb-1">
-              <Label htmlFor="bankDocument" className=" sm:text-base text-xs">
-                Upload Bank Document
-              </Label>
-              <Input
-                type="file"
-                name="bankDoc"
-                className={`outline-none mt-0.5 rounded `}
-                onChange={handleFileChange}
-              />
-              {formData.bankDoc && (
-                <img
-                  src={getPreviewUrl(formData.bankDoc)}
-                  alt="Bank Document Preview"
-                  className="mt-2 h-20"
-                />
-              )}
-              {errors.bankDoc && (
-                <p className="text-xs text-red-500">{errors.bankDoc}</p>
-              )}
-            </div>
-            <div className="element sm:mb-3 mb-1">
-              <Label htmlFor="addressProve" className=" sm:text-base text-xs">
-                Upload Address Proof
-              </Label>
-              <Input
-                type="file"
-                name="addressProve"
-                className={`outline-none mt-0.5 rounded `}
-                onChange={handleFileChange}
-              />
-              {formData.addressProve && (
-                <img
-                  src={getPreviewUrl(formData.addressProve)}
-                  alt="Address Proof Preview"
-                  className="mt-2 h-20"
-                />
-              )}
-              {errors.addressProve && (
-                <p className="text-xs text-red-500">{errors.addressProve}</p>
+                <p className="text-xs text-red-500">
+                  {errors.confirmPassword}
+                </p>
               )}
             </div>
           </div>
-          <Button type="submit" disabled={isLoading} className="mt-4 w-full">
-            {isLoading ? "Registering..." : "Register"}
+          <div className="sm:mb-3 mb-1">
+            <Label htmlFor="gstDoc" className=" sm:text-base text-xs">
+              GST Document
+            </Label>
+            <Input
+              type="file"
+              name="gstDoc"
+              className={`outline-none mt-0.5 rounded w-full`}
+              onChange={handleFileChange}
+            />
+            {errors.gstDoc && (
+              <p className="text-xs text-red-500">{errors.gstDoc}</p>
+            )}
+            {getPreviewUrl(formData.gstDoc) && (
+              <img
+                src={getPreviewUrl(formData.gstDoc)}
+                alt="GST Document Preview"
+                className="mt-2 w-full h-auto max-w-xs"
+              />
+            )}
+          </div>
+          <div className="sm:mb-3 mb-1">
+            <Label htmlFor="bankDoc" className=" sm:text-base text-xs">
+              Bank Document
+            </Label>
+            <Input
+              type="file"
+              name="bankDoc"
+              className={`outline-none mt-0.5 rounded w-full`}
+              onChange={handleFileChange}
+            />
+            {errors.bankDoc && (
+              <p className="text-xs text-red-500">{errors.bankDoc}</p>
+            )}
+            {getPreviewUrl(formData.bankDoc) && (
+              <img
+                src={getPreviewUrl(formData.bankDoc)}
+                alt="Bank Document Preview"
+                className="mt-2 w-full h-auto max-w-xs"
+              />
+            )}
+          </div>
+          <div className="sm:mb-3 mb-1">
+            <Label htmlFor="addressProve" className=" sm:text-base text-xs">
+              Address Proof
+            </Label>
+            <Input
+              type="file"
+              name="addressProve"
+              className={`outline-none mt-0.5 rounded w-full`}
+              onChange={handleFileChange}
+            />
+            {errors.addressProve && (
+              <p className="text-xs text-red-500">{errors.addressProve}</p>
+            )}
+            {getPreviewUrl(formData.addressProve) && (
+              <img
+                src={getPreviewUrl(formData.addressProve)}
+                alt="Address Proof Preview"
+                className="mt-2 w-full h-auto max-w-xs"
+              />
+            )}
+          </div>
+          <Button
+            type="submit"
+            className="w-full mt-3 bg-[#4E1B61] hover:bg-[#6d2d89]"
+          >
+            Register
           </Button>
         </form>
-        <div className="add-account sm:text-sm text-xs">
-          <p className="mb-1">
-            Already have an account?{" "}
-            <Link href="/auth" className="text-blue-600">
-              Login
-            </Link>
-          </p>
-          <p>
-            Signup as User
-            <Link href="/auth/user-signup" className="text-blue-600 ml-2">
-              Signup
-            </Link>
-          </p>
-        </div>
-        <ToastContainer />
+        <p className="text-sm">
+          Already have an account?{" "}
+          <Link href="/vendor/login" className="text-[#4E1B61]">
+            Login
+          </Link>
+        </p>
       </div>
+      <ToastContainer />
     </div>
   );
 };

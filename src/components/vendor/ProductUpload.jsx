@@ -3,6 +3,8 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "../ui/textarea";
+import { toast } from "react-toastify";
+
 import {
   Select,
   SelectContent,
@@ -102,10 +104,11 @@ const ProductUpload = ({ onSuccess }) => {
     formData.append("speciality", speciality);
     const specsFormatted = specs.map(spec => `${spec.key}:${spec.value}`).join(",");
     formData.append("specs", specsFormatted);
-    console.log(formData);
+   
     try {
       const response = await uploadProduct(formData).unwrap();
-      console.log("Product uploaded successfully:", response);
+
+      toast.success(response.data.message);
       setProductName("");
       setProductDescription("");
       setPrice("");
@@ -119,6 +122,7 @@ const ProductUpload = ({ onSuccess }) => {
       setErrors({});
       onSuccess();
     } catch (error) {
+      toast.error(error.data.message || "error occured");
       console.error("Failed to upload product:", error);
     }
   };
@@ -314,6 +318,7 @@ const ProductUpload = ({ onSuccess }) => {
         </div>
       </div>
       <Button type="submit" className=" w-full">Add Product</Button>
+    
     </form>
   );
 };

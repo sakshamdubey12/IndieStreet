@@ -13,7 +13,7 @@ import cartReducer from "./slices/cartSlice";
 import wishlistReducer from "./slices/wishlistSlice";
 import { persistStore, persistReducer } from "redux-persist";
 import storage from "redux-persist/lib/storage";
-
+import authReducer from './slices/vendorSlice';
 const applyMiddlewareConditionally = (middlewares) => {
   const isAuthEnabled = true;
   const isVendorApiEnabled = true;
@@ -58,9 +58,13 @@ const persistConfig = {
   whitelist: ["cart", "wishlist"],
   blacklist:['_persist']
 };
-
+const persistVendorConfig = {
+  key: 'root',
+  storage,
+};
 const rootReducer = combineReducers({
   dialog: dialogReducer,
+  auth: persistReducer(persistVendorConfig, authReducer),
   sort: sortReducer,
   cart: cartReducer,
   wishlist: wishlistReducer,
