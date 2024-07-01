@@ -136,7 +136,7 @@ const UserNavbar = () => {
         <div
           className={
             (lastScroll > 104
-              ? "bg-[#ffffff8b] backdrop-blur md:py-1 pt-0.5"
+              ? "bg-[#ffffff8b] backdrop-blur md:py-1 py-1"
               : "bg-white md:py-2 py-1") +
             ` !px-[5%] lower text-[#4E1B61] transition-all ease-in-out duration-200`
           }
@@ -162,7 +162,12 @@ const UserNavbar = () => {
                 {visibleCategories.map((category) => (
                   <li
                     key={category._id}
-                    className="h-16 w-max relative after:absolute after:rounded-t-xl after:w-0 after:h-1 after:bg-[#4E1B61] after:-bottom-2 after:left-0 hover:after:w-full after:ease-in-out after:duration-300 after:transition-all"
+                    className={
+                      (lastScroll > 104
+                        ? "after:-bottom-1"
+                        : "after:-bottom-2") +
+                      " h-16 w-max relative after:absolute after:rounded-t-xl after:w-0 after:h-1 after:bg-[#4E1B61] after:-bottom-2 after:left-0 hover:after:w-full after:ease-in-out after:duration-300 after:transition-all"
+                    }
                   >
                     <Link
                       href={`/category/${category.categoryName

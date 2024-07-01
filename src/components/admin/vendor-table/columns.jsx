@@ -8,16 +8,6 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 
-const handleDownload = (url) => {
-  console.log(url);
-  if (url) {
-    const link = document.createElement("a");
-    link.href = url;
-    link.download = url.split("/").pop() || "download";
-    link.click();
-  }
-};
-
 export const columns = [
   {
     accessorKey: "fullname",
@@ -134,10 +124,7 @@ export const columns = [
           <DropdownMenuContent className="bg-white">
             <DropdownMenuSeparator />
             <DropdownMenuItem>
-              <a href={row.original.accountProof} download target="_blank">
-                {" "}
-                Account Proof
-              </a>
+              <a href={row.original.accountProof}>Account Proof</a>
             </DropdownMenuItem>
             <DropdownMenuItem>
               <a href={row.original.addressProof}>Address Proof</a>

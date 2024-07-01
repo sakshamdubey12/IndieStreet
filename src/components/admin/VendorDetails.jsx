@@ -14,7 +14,6 @@ const Vendor = () => {
       setVendorDetailsFetched(data.data);
     }
   }, [data]);
-  // console.log(vendorDetailsFetched);
   const transformedData = transformData(vendorDetailsFetched);
   // console.log(transformedData);
   if (error) {

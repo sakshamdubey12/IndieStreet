@@ -1,7 +1,5 @@
 
 export const transformData = (data) => {
-  // console.log(data);
-  
   return data?.map((item) => {
     const accountProof = item.files?.[0]?.url || "";
     const addressProof = item.files?.[1]?.url || "";
