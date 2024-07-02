@@ -76,19 +76,15 @@ const ProductInfo = ({ params }) => {
   );
 
   useEffect(() => {
-    if (data?.response?.id) {
-      const isInWishlist = wishlist.some(
-        (item) => item.id === data?.response?.id
-      );
-      setIsInWishlist(isInWishlist);
-      const isInCart = cart.some((item) => item.id === data?.response?.id);
-      setIsInCart(isInCart);
-    }
-  }, [wishlist, cart, data?.response?.id]);
-
+    const isInWishlist = wishlist.some(
+      (item) => item.id === data?.response?.id
+    );
+    setIsInWishlist(isInWishlist);
+    const isInCart = cart.some((item) => item.id === data?.response?.id);
+    setIsInCart(isInCart);
+  }, [wishlist, cart]);
   console.log(cart, wishlist);
   console.log(data?.response);
-
   const handleWishlistClick = () => {
     if (isInWishlist) {
       dispatch(removeFromWishlist(data?.response));
@@ -106,11 +102,9 @@ const ProductInfo = ({ params }) => {
     }
     setIsInCart(!isInCart);
   };
-
   if (isLoading) {
     return <ProductPage />;
   }
-
   return (
     <section className="px-[5%] md:py-16 sm:py-8 py-5 mx-auto max-w-[100rem]">
       <div className="product-info grid xl:grid-cols-4 lg:grid-cols-5 grid-cols-1 lg:gap-10 gap-5 md:mb-16 sm:mb-10 mb-6 relative">
@@ -122,7 +116,7 @@ const ProductInfo = ({ params }) => {
                   key={index}
                   className={
                     (index === 0 ? "" : " left-4 ") +
-                    `lg:min-w-full max-w-[500px] lg:h-[30rem] md:h-[500px] sm:h-[400px] h-[350px] p-0 m-0 relative`
+                    "lg:min-w-full max-w-[500px] lg:h-[30rem] md:h-[500px] sm:h-[400px] h-[350px] p-0 m-0 relative"
                   }
                 >
                   <div className=" m-0 p-0 lg:min-w-full max-w-[500px] lg:h-[30rem] md:h-[500px] sm:h-[400px] h-[350px] left-4 relative">
@@ -193,138 +187,215 @@ const ProductInfo = ({ params }) => {
             </p>
           </div>
           <div className="price-cta">
-            <div className="mb-6 flex items-center justify-between">
-              <div className="flex items-center text-gray-600">
-                <FaLocationDot className="md:w-6 w-5 md:h-6 h-5 mr-1 text-gray-700" />
-                <span className=" font-medium md:text-base text-sm mt-0.5">
-                  {data?.response?.location}
-                </span>
-              </div>
-              <div className="pricing md:text-lg sm:text-base text-sm text-gray-600/90">
+            <div className="price flex items-baseline md:mb-3 sm:mb-2 mb-1">
+              <Header
+                title={`₹${data?.response?.offerPrice}`}
+                className=" font-medium text-red-600 mr-2"
+              />
+              <span className="lg:text-base text-sm line-through text-gray-600 mr-2">
                 ₹ {data?.response?.price}
-              </div>
+              </span>
             </div>
-            <div className="cta grid sm:grid-cols-2 grid-cols-1 gap-3 sm:w-full w-4/5">
+            <div className="cta w-full grid grid-cols-2 gap-2 mb-5">
               <Button
                 onClick={handleCartClick}
+                variant="ghost"
                 className={
-                  " sm:text-base text-sm sm:py-3 py-2 sm:px-8 px-6 " +
                   (isInCart
-                    ? "bg-gray-400 hover:bg-gray-500 "
-                    : "bg-primary-red hover:bg-red-600")
+                    ? "bg-[#cef52044] hover:bg-[#cef52044] "
+                    : "bg-gray-200/60 hover:bg-gray-200/60 ") +
+                  "!text-sm hover:border-0 border-0 hover:text-gray-600 text-gray-600 md:py-4 py-3 rounded"
                 }
               >
-                {isInCart ? "Remove from Cart" : "Add to Cart"}
+                {isInCart ? (
+                  <>
+                    <Trash2 className="w-4 h-4 mr-1 relative bottom-0.5" />{" "}
+                    <span>Remove</span>
+                  </>
+                ) : (
+                  "Add to Cart"
+                )}
               </Button>
-              <Button className="sm:text-base text-sm sm:py-3 py-2 sm:px-8 px-6 bg-primary-red hover:bg-red-600">
-                Buy Now
-              </Button>
+              <Button className="md:py-4 py-3">Buy Now</Button>
+            </div>
+            <span className=" block w-full h-[1px] bg-gray-600/20"></span>
+            <div className="condition">
+              <Table className="w-full">
+                <TableBody>
+                  <TableRow className="flex-wrap flex sm:flex-row flex-col">
+                    <TableCell className="flex flex-col sm:w-1/2 w-full sm:py-5 py-3 px-2 sm:border-r border-r-0 sm:border-b-0 border-b">
+                      <h1 className=" font-medium mb-2">Delivery Option</h1>
+                      <div className="location flex items-end mb-2">
+                        <form className=" flex mr-2">
+                          <span className=" sm:p-3 p-2 sm:h-11 h-8 bg-[#4e1b61] text-white text-lg rounded-l z-0">
+                            <FaLocationDot className=" sm:w-5 sm:h-5 w-4 h-4" />
+                          </span>
+                          <Input
+                            placeholder="000000"
+                            className=" -ml-0.5 sm:h-11 h-8 w-20"
+                            minLength="6"
+                            maxLength="6"
+                          />
+                        </form>
+                      </div>
+                      <p className="text-xs text-gray-600/90">
+                        Please enter Pin code to check delivery time & Pay on
+                        delivery availability
+                      </p>
+                    </TableCell>
+                    <TableCell className="flex flex-col sm:w-1/2 w-full sm:py-5 py-3 px-2">
+                      <h1 className=" font-medium mb-2">Shipping Details</h1>
+                      <p className="text-xs text-gray-600/90">
+                        Check Return Policy
+                      </p>
+                    </TableCell>
+                  </TableRow>
+                </TableBody>
+              </Table>
             </div>
           </div>
         </div>
       </div>
-      <div className="spec-review grid md:grid-cols-2 grid-cols-1 gap-10">
-        <div className="specs grid sm:grid-cols-2 grid-cols-1 gap-4 mb-6">
-          {data?.response?.specs.map((spec, index) => (
-            <div
-              key={index}
-              className="spec-card flex justify-between items-center rounded-xl md:p-6 p-4 sm:bg-transparent bg-white border md:border-none border-gray-200"
-            >
-              <div className="spec-name font-medium text-gray-700/95 md:text-lg text-base">
-                {spec.name}
-              </div>
-              <div className="spec-value font-medium text-gray-600/90 md:text-base text-sm">
-                {spec.value}
-              </div>
-            </div>
-          ))}
-        </div>
-        <div className="reviews flex flex-col">
-          <h2 className="text-gray-800 font-semibold text-2xl mb-4">
-            Customer Reviews
-          </h2>
-          {data?.response?.reviews.length > 0 ? (
-            <div className="reviews-list flex flex-col gap-3">
-              {data?.response?.reviews.map((review, index) => (
-                <div
-                  key={index}
-                  className="review-item p-4 rounded-lg border border-gray-200"
-                >
-                  <div className="review-header flex justify-between items-center mb-2">
-                    <div className="flex items-center gap-2">
-                      <Avatar className="w-10 h-10">
-                        <AvatarImage src={review.userAvatar} alt="" />
-                        <AvatarFallback>U</AvatarFallback>
+      <div className="review-specs grid lg:grid-cols-4 grid-cols-1 lg:gap-10 gap-5 relative">
+        <div className="review col-span-2 lg:sticky top-28 h-fit">
+          <div className="post-review md:mb-5 sm:mb-3 mb-1 flex items-end justify-between">
+            <Header
+              title="Customer Reviews"
+              className="block text-end mb-0 pb-0"
+            />
+            <Dialog>
+              <DialogTrigger className="sm:text-sm text-xs border px-3 py-2 rounded bg-[#4e1b61] text-white">
+                Add Review
+              </DialogTrigger>
+              <DialogContent className="bg-white">
+                <DialogHeader>
+                  <DialogTitle className="mb-2">Add your Review</DialogTitle>
+                  <div>
+                    <form onSubmit={handleSubmit}>
+                      <Label>Rating</Label>
+                      <Input
+                        name="rating"
+                        placeholder="Ratings"
+                        value={reviewData.rating}
+                        onChange={handleChange}
+                        className="mb-1"
+                        required
+                      />
+                      <Label>Review</Label>
+                      <Textarea
+                        name="review"
+                        placeholder="Add your Review here...."
+                        value={reviewData.review}
+                        onChange={handleChange}
+                        required
+                        className="mb-2"
+                      />
+                      <Button type="submit" disabled={isLoading}>
+                        {isLoading ? "Submitting..." : "Add Review"}
+                      </Button>
+                    </form>
+                    {isSuccess && <p>Review posted successfully!</p>}
+                    {isError && <p>Failed to post review. Please try again.</p>}
+                  </div>
+                </DialogHeader>
+              </DialogContent>
+            </Dialog>
+          </div>
+          <div>
+            {data?.response?.reviews?.map((review) => (
+              <div className="review-card shadow-none">
+                <Card className="w-full py-3 px-5">
+                  <div className="info flex items-center justify-between md:mb-3 sm:mb-2">
+                    <div className="user flex items-center">
+                      <Avatar className="mr-2.5">
+                        <AvatarImage src="https://github.com/shadcn.png" />
+                        <AvatarFallback>CN</AvatarFallback>
                       </Avatar>
-                      <div className="user-info flex flex-col">
-                        <span className="font-medium text-gray-700">
-                          {review.username}
-                        </span>
-                        <span className="text-gray-500 text-sm">
-                          {review.date}
-                        </span>
-                      </div>
+                      <h1 className="font-medium">{review.postedBy}</h1>
                     </div>
-                    <div className="rating flex items-center text-gray-600">
-                      <FaStar className="text-yellow-500" />
-                      <span className="font-medium text-sm ml-1">
+                    <div className="rating flex text-gray-600/95 items-center">
+                      <FaStar className=" mr-1.5 text-yellow-500" />
+                      <span className=" font-semibold mt-0.5">
                         {review.rating}
-                      </span>
+                      </span>{" "}
                     </div>
                   </div>
-                  <p className="text-gray-600">{review.text}</p>
+                  {/* <div
+                    className={
+                      (review.images.length > 0 ? "flex mb-2 " : "hidden ") +
+                      "images text-gray-600"
+                    }
+                  >
+                    {review?.images.map((image, index) => (
+                      <div
+                        className="img-cont md:w-20 sm:w-16 w-14 md:h-20 sm:h-16 h-14 overflow-hidden rounded mx-1"
+                        key={index}
+                      >
+                        <Image
+                          width={1000}
+                          height={1000}
+                          src={image}
+                          alt=""
+                          className="object-fill md:w-20 sm:w-16 w-14 md:h-20 sm:h-16 h-14"
+                        />
+                      </div>
+                    ))}
+                  </div> */}
+                  <CardDescription className="text-gray-600">
+                    {review.review}
+                  </CardDescription>
+                </Card>
+              </div>
+            ))}
+          </div>
+          <div className="review-card shadow-none">
+            <Card className="w-full py-3 px-5">
+              <div className="info flex items-center justify-between md:mb-3 sm:mb-2 mb-1">
+                <div className="user flex items-center">
+                  <Avatar className="mr-2.5 md:h-10 md:w-10 sm:w-9 sm:h-9 h-8 w-8">
+                    <AvatarImage src="https://github.com/shadcn.png" />
+                    <AvatarFallback>CN</AvatarFallback>
+                  </Avatar>
+                  <h1 className=" md:text-lg sm:text-base text-sm font-medium">
+                    John Doe
+                  </h1>
                 </div>
-              ))}
-            </div>
-          ) : (
-            <p className="text-gray-600">No reviews yet.</p>
-          )}
-          <Dialog>
-            <DialogTrigger asChild>
-              <Button className="mt-6 bg-primary-red hover:bg-red-600">
-                Write a Review
-              </Button>
-            </DialogTrigger>
-            <DialogContent>
-              <DialogHeader>
-                <DialogTitle>Write a Review</DialogTitle>
-              </DialogHeader>
-              <form onSubmit={handleSubmit}>
-                <div className="mb-4">
-                  <Label htmlFor="rating">Rating</Label>
-                  <Input
-                    id="rating"
-                    name="rating"
-                    type="number"
-                    value={reviewData.rating}
-                    onChange={handleChange}
-                    min="0"
-                    max="5"
-                    required
-                  />
+                <div className="rating flex text-gray-600/95 items-center">
+                  <FaStar className=" mr-1.5 text-yellow-500" />
+                  <span className=" font-semibold mt-0.5 sm:text-sm text-xs">
+                    4.5
+                  </span>{" "}
                 </div>
-                <div className="mb-4">
-                  <Label htmlFor="review">Review</Label>
-                  <Textarea
-                    id="review"
-                    name="review"
-                    value={reviewData.review}
-                    onChange={handleChange}
-                    required
-                  />
-                </div>
-                <Button
-                  type="submit"
-                  className={
-                    "w-full " + (reviewLoading ? "bg-gray-400" : "bg-primary-red")
-                  }
-                  disabled={reviewLoading}
-                >
-                  {reviewLoading ? "Submitting..." : "Submit Review"}
-                </Button>
-              </form>
-            </DialogContent>
-          </Dialog>
+              </div>
+              <div className="images flex sm:mb-2 mb-1 text-gray-600"></div>
+              <CardDescription className=" text-gray-600 sm:text-sm text-xs">
+                Lorem ipsum dolor sit amet consectetur adipisicing elit.
+                Explicabo dignissimos tenetur ea sed delectus autem quibusdam!
+                Qui omnis commodi voluptatum laudantium consequatur fugiat earum
+                est, sint quisquam error eaque illum.
+              </CardDescription>
+            </Card>
+          </div>
+        </div>
+        <div className="Specifications col-span-2 lg:sticky top-28 h-fit">
+          <Header title="Product Details" />
+          <div className="spec-cont w-full">
+            <Table className="w-full text-gray-600 sm:text-sm text-xs">
+              <TableBody>
+                {data?.response?.specs[0]?.split(",").map((spec, index) => {
+                  const [key, value] = spec.split(":");
+                  return (
+                    <TableRow key={index}>
+                      <TableCell className="w-44 flex items-start">
+                        {key.charAt(0).toUpperCase() + key.slice(1)}
+                      </TableCell>
+                      <TableCell className="w-full">{value}</TableCell>
+                    </TableRow>
+                  );
+                })}
+              </TableBody>
+            </Table>
+          </div>
         </div>
       </div>
     </section>
