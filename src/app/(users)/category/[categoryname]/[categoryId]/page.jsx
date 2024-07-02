@@ -134,14 +134,14 @@ const Products = ({ params }) => {
   console.log(products);
 
   return (
-    <section className="px-[5%] py-16 mx-auto max-w-[100rem]">
-      <div className="filter flex items-center justify-between mb-4 border-b-2">
-        <Header title={productName} className="block" />
+    <section className="px-[5%] md:py-16 sm:py-8 py-5 mx-auto max-w-[100rem]">
+      <div className="filter flex items-end justify-between md:mb-4 sm:mb-3 mb-2 border-b-2">
+        <Header title={productName} className="block text-end mb-2 pb-0" />
         <div className="selected"></div>
         <div className="innerfilters pb-2 flex items-center">
           <Sheet>
             <SheetTrigger className="text-gray-600 py-2 px-2.5 h-10 rounded border bg-gray-200/60 hover:bg-gray-200/60">
-              <FilterIcon className="w-4 h-4" />
+              <FilterIcon className="sm:w-4 w-3.5 sm:h-4 h-3.5" />
             </SheetTrigger>
             <SheetContent className=" bg-white" side="left">
               <SheetHeader>
@@ -155,7 +155,8 @@ const Products = ({ params }) => {
           </Sheet>
           <Select onValueChange={handleSortChange}>
             <SelectTrigger className="w-[150px] ml-2 text-gray-600 py-2 px-2.5 h-10 rounded border border-gray-200 bg-gray-200/60 hover:bg-gray-200/60">
-              <SortDescIcon className="w-5 h-5" /> Sort By
+              <SortDescIcon className="sm:w-4 w-3.5 sm:h-4 h-3.5" />{" "}
+              <span className="sm:text-base text-sm">Sort By</span>
             </SelectTrigger>
             <SelectContent className=" bg-white w-[150px]">
               <SelectItem value="title-asc" className="px-6 text-xs">
@@ -181,7 +182,7 @@ const Products = ({ params }) => {
         </div>
       </div>
 
-      <div className="products-listing grid grid-cols-1 xs:grid-col-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 sm:gap-2 gap-1">
+      <div className="products-listing grid xl:grid-cols-5 lg:grid-cols-4 md:grid-cols-3 grid-cols-2 sm:gap-2">
         {isLoading ? (
           <>
             {Array.from({ length: 5 }).map((_, index) => (
@@ -224,7 +225,10 @@ const Products = ({ params }) => {
         ) : (
           <>
             {filterByCategory(products).map((product) => (
-              <div className="card-container" key={product.id}>
+              <div
+                className="card-container sm:scale-100 scale-95"
+                key={product.id}
+              >
                 <ProductCard product={product} />
               </div>
             ))}

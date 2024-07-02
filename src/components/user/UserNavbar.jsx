@@ -24,11 +24,9 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
-import { Button } from "../ui/button";
 import {
   NavigationMenu,
   NavigationMenuContent,
-  NavigationMenuIndicator,
   NavigationMenuItem,
   NavigationMenuLink,
   NavigationMenuList,
@@ -166,7 +164,7 @@ const UserNavbar = () => {
                       (lastScroll > 104
                         ? "after:-bottom-1"
                         : "after:-bottom-2") +
-                      " h-16 w-max relative after:absolute after:rounded-t-xl after:w-0 after:h-1 after:bg-[#4E1B61] after:-bottom-2 after:left-0 hover:after:w-full after:ease-in-out after:duration-300 after:transition-all"
+                      " h-16 w-max relative after:absolute after:rounded-t-xl after:w-0 after:h-1 after:bg-[#4E1B61] after:left-0 hover:after:w-full after:ease-in-out after:duration-300 after:transition-all"
                     }
                   >
                     <Link
@@ -184,7 +182,12 @@ const UserNavbar = () => {
                     <NavigationMenu>
                       <NavigationMenuList>
                         <NavigationMenuItem>
-                          <NavigationMenuTrigger className="h-16 w-max relative after:absolute after:rounded-t-xl after:w-full after:h-1 after:bg-[#4E1B61] after:-bottom-0.5 after:left-0 after:opacity-0 hover:after:opacity-100 after:ease-in-out after:duration-300 after:transition-all">
+                          <NavigationMenuTrigger className={
+                      (lastScroll > 104
+                        ? "after:-bottom-1"
+                        : "after:-bottom-2") +
+                      " h-16 w-max relative after:absolute after:rounded-t-xl !after:w-0 after:h-1 after:bg-[#4E1B61] after:left-0 hover:after:w-full after:ease-in-out after:duration-300 after:transition-all"
+                    }>
                             Categories
                           </NavigationMenuTrigger>
                           <NavigationMenuContent className="bg-white grid grid-cols-1 py-2 !border border-[#4e1b6156]">
@@ -192,9 +195,9 @@ const UserNavbar = () => {
                               {hiddenCategories.map((category) => (
                                 <NavigationMenuLink
                                   key={category._id}
-                                  href={`/${category.categoryName
+                                  href={`/category/${category.categoryName
                                     .toLowerCase()
-                                    .replace(" ", "-")}-${category._id}`}
+                                    .replace(" ", "-")}/${category._id}`}
                                   className="block px-2 py-0.5 relative after:absolute after:w-1 after:rounded-l after:h-full after:right-0 after:top-0 after:bg-[#4E1B61] after:opacity-0 hover:after:opacity-100 after:ease-in-out after:duration-300 after:transition-all font-medium hover:font-semibold duration-75 ease-in-out transition-all md:text-base text-sm"
                                 >
                                   {category.categoryName}
@@ -272,7 +275,7 @@ const UserNavbar = () => {
                         href="/wishlist"
                         className=" sm:p-2.5 p-1 flex relative"
                       >
-                        <HeartIcon fill="#4E1B61" className="w-5 h-5" />
+                        <HeartIcon fill="#4E1B61" className="sm:w-5 w-4 sm:h-5 h-4" />
                         {wishlistLength > 0 ? (
                           <span
                             className={
@@ -308,7 +311,7 @@ const UserNavbar = () => {
                         href="/cart"
                         className=" sm:p-2.5 p-1 flex relative"
                       >
-                        <ShoppingCartIcon fill="#4E1B61" className="w-5 h-5" />
+                        <ShoppingCartIcon fill="#4E1B61" className="sm:w-5 w-4 sm:h-5 h-4" />
                         {cartLength > 0 ? (
                           <span
                             className={
@@ -331,7 +334,7 @@ const UserNavbar = () => {
                   </Tooltip>
                 </TooltipProvider>
               </li>
-              <li className={"flex justify-center items-center"}>
+              <li className={"flex justify-center items-center lg:ml-3 ml-1.5"}>
                 {isAuth ? (
                   <DropdownMenu>
                     <DropdownMenuTrigger

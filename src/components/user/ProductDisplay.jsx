@@ -5,9 +5,7 @@ import { useGetProductsByCategoryQuery } from "@/redux/slices/GetAllProduct";
 import ProductCard from "./ProductCard";
 
 const ProductDisplay = ({ title, url }) => {
-  const items = ["Item 1", "Item 2", "Item 3", "Item 4", "Item 5", "Item 6"];
   const { data: products } = useGetProductsByCategoryQuery();
-
   const filterByCategory = (productList) => {
     const list = productList?.filter((product) => {
       return product.categoryName.toUpperCase() === title?.toUpperCase();
@@ -17,7 +15,7 @@ const ProductDisplay = ({ title, url }) => {
 
   return (
     <section className=" px-[5%] lg:py-16 md:py-12 sm:py-10 py-6 mx-auto max-w-[100rem]">
-      <div className="header flex items-center justify-between sm:mb-8 mb-4">
+      <div className="header flex items-center justify-between md:mb-8 sm:mb-4 mb-0">
         <Header title={title} className="mt-4" />
         <Link
           href={url}
@@ -26,11 +24,14 @@ const ProductDisplay = ({ title, url }) => {
           View More
         </Link>
       </div>
-      <div className="grid xl:grid-cols-5 lg:grid-cols-4 md:grid-cols-3 grid-cols-2 gap-2">
+      <div className="grid xl:grid-cols-5 lg:grid-cols-4 md:grid-cols-3 grid-cols-2 sm:gap-2">
         {filterByCategory(products)
           ?.slice(0, window.innerWidth >= 1280 ? 5 : 4)
           .map((product) => (
-            <div className="card-container sm:scale-100 scale-95" key={product.id}>
+            <div
+              className="card-container sm:scale-100 scale-95"
+              key={product.id}
+            >
               <ProductCard product={product} />
             </div>
           ))}

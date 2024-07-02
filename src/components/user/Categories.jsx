@@ -13,10 +13,14 @@ import { useGetProductCategoryQuery } from "@/redux/slices/ProductCategorySlice"
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
+import CategorySkeleton from "./skeleton/CategorySkeleton";
 
 export function CarouselSize({ title }) {
   const router = useRouter();
   const { data: categoryData, error, isLoading } = useGetProductCategoryQuery();
+  if(isLoading){
+    return <CategorySkeleton/>
+  }
   return (
     <section className="px-[5%] lg:py-16 md:py-12 sm:py-10 py-4">
       <div className="category max-w-[100rem] mx-auto">

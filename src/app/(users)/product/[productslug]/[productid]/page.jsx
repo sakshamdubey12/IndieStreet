@@ -20,7 +20,6 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
   Dialog,
   DialogContent,
-  DialogDescription,
   DialogHeader,
   DialogTitle,
   DialogTrigger,
@@ -36,9 +35,12 @@ import { addToCart, removeFromCart } from "@/redux/slices/cartSlice";
 import { useSelector, useDispatch } from "react-redux";
 import Image from "next/image";
 import { IoHeartDislikeSharp } from "react-icons/io5";
+import Loading from "@/components/common/Loading";
+import ProductPage from "@/components/user/skeleton/ProductPage";
 
 const ProductInfo = ({ params }) => {
   const dispatch = useDispatch();
+  const productId = params.productid;
   const wishlist = useSelector((state) => state.wishlist);
   const [isInWishlist, setIsInWishlist] = useState(false);
   const cart = useSelector((state) => state.cart);
@@ -74,13 +76,18 @@ const ProductInfo = ({ params }) => {
   );
 
   useEffect(() => {
-    const isInWishlist = wishlist.some(
-      (item) => item.id === data?.response?.id
-    );
-    setIsInWishlist(isInWishlist);
-    const isInCart = cart.some((item) => item.id === data?.response?.id);
-    setIsInCart(isInCart);
-  }, [wishlist, cart]);
+    if (data?.response?.id) {
+      const isInWishlist = wishlist.some(
+        (item) => item.id === data?.response?.id
+      );
+      setIsInWishlist(isInWishlist);
+      const isInCart = cart.some((item) => item.id === data?.response?.id);
+      setIsInCart(isInCart);
+    }
+  }, [wishlist, cart, data?.response?.id]);
+
+  console.log(cart, wishlist);
+  console.log(data?.response);
 
   const handleWishlistClick = () => {
     if (isInWishlist) {
@@ -100,9 +107,13 @@ const ProductInfo = ({ params }) => {
     setIsInCart(!isInCart);
   };
 
+  if (isLoading) {
+    return <ProductPage />;
+  }
+
   return (
-    <section className="px-[7%] py-14 mx-auto max-w-[100rem]">
-      <div className="product-info grid xl:grid-cols-4 lg:grid-cols-5 grid-cols-1 lg:gap-10 gap-5 mb-16 relative">
+    <section className="px-[5%] md:py-16 sm:py-8 py-5 mx-auto max-w-[100rem]">
+      <div className="product-info grid xl:grid-cols-4 lg:grid-cols-5 grid-cols-1 lg:gap-10 gap-5 md:mb-16 sm:mb-10 mb-6 relative">
         <div className="img xl:col-span-2 lg:col-span-3 col-span-1 flex justify-between items-center lg:sticky top-32 h-fit">
           <Carousel className="sm:w-[80%] w-[95%] mx-auto">
             <CarouselContent className="w-full">
@@ -134,36 +145,42 @@ const ProductInfo = ({ params }) => {
             <CarouselNext className="border border-[#4e1b618a] text-[#4e1b61] rounded-full sm:-right-16 -right-8" />
           </Carousel>
         </div>
-        <div className="description lg:col-span-2 col-span-1 flex flex-col justify-between">
+        <div className="description lg:col-span-2 col-span-1 flex flex-col justify-between lg:px-0 sm:px-3 px-1">
           <div className="upper">
-            <div className="flex items-center justify-between mb-3">
-              <Header title={data?.response?.name} />
+            <div className="flex items-end justify-between md:mb-3 sm:mb-2 mb-1">
+              <Header
+                title={data?.response?.name}
+                className="block text-end mb-1.5 pb-0"
+              />
               <button
                 onClick={handleWishlistClick}
                 className={
                   (isInWishlist
                     ? "bg-gray-200/60 text-gray-600"
                     : "bg-gray-200/60 text-gray-600") +
-                  "  w-10 h-10 rounded-full text-sm font-medium grid place-items-center relative"
+                  " w-10 h-10 rounded-full text-sm font-medium grid place-items-center relative"
                 }
               >
                 {isInWishlist ? (
-                  <IoHeartDislikeSharp className="w-5 h-5 absolute" />
+                  <IoHeartDislikeSharp className="md:w-5 w-4 md:h-5 h-4 absolute" />
                 ) : (
-                  <HeartIcon fill="#4b5563" className="w-5 h-5 absolute" />
+                  <HeartIcon
+                    fill="#4b5563"
+                    className="md:w-5 w-4 md:h-5 h-4 absolute"
+                  />
                 )}
               </button>
             </div>
             <div className="combine flex items-center mb-1">
               <div className="rating flex text-gray-600/95 items-center">
                 <FaStar className=" mr-1.5 text-yellow-500" />
-                <span className=" font-semibold mt-0.5">
+                <span className=" font-medium mt-0.5 md:text-base text-sm">
                   {data?.response?.rating}
                 </span>{" "}
               </div>
               <span className=" bg-gray-600/70 w-0.5 h-7 block mx-5 rounded-full"></span>
               <div className="review flex items-center text-gray-600/95">
-                <span className=" mr-1 font-semibold mt-0.5">
+                <span className=" mr-1 font-medium mt-0.5 md:text-base text-sm">
                   {data?.response?.reviews?.length > 0
                     ? data?.response?.reviews?.length
                     : 0}{" "}
@@ -171,206 +188,143 @@ const ProductInfo = ({ params }) => {
                 </span>
               </div>
             </div>
-            <p className=" text-gray-600 mb-3">{data?.response?.description}</p>
+            <p className=" text-gray-600 mb-3 md:text-base text-sm">
+              {data?.response?.description}
+            </p>
           </div>
           <div className="price-cta">
-            <div className="price flex items-baseline mb-3">
-              <span className="offer text-2xl font-medium text-red-600 mr-2">
-                ₹ {data?.response?.offerPrice}
-              </span>
-              <span className=" text-lg line-through text-gray-600 mr-2">
+            <div className="mb-6 flex items-center justify-between">
+              <div className="flex items-center text-gray-600">
+                <FaLocationDot className="md:w-6 w-5 md:h-6 h-5 mr-1 text-gray-700" />
+                <span className=" font-medium md:text-base text-sm mt-0.5">
+                  {data?.response?.location}
+                </span>
+              </div>
+              <div className="pricing md:text-lg sm:text-base text-sm text-gray-600/90">
                 ₹ {data?.response?.price}
-              </span>
+              </div>
             </div>
-            <div className="cta w-full flex mb-5">
+            <div className="cta grid sm:grid-cols-2 grid-cols-1 gap-3 sm:w-full w-4/5">
               <Button
                 onClick={handleCartClick}
-                variant="ghost"
                 className={
+                  " sm:text-base text-sm sm:py-3 py-2 sm:px-8 px-6 " +
                   (isInCart
-                    ? "bg-[#cef52044] hover:bg-[#cef52044] "
-                    : "bg-gray-200/60 hover:bg-gray-200/60 ") +
-                  "w-1/2 !text-sm hover:border-0 border-0 hover:text-gray-600 text-gray-600 mr-2 py-2.5 rounded"
+                    ? "bg-gray-400 hover:bg-gray-500 "
+                    : "bg-primary-red hover:bg-red-600")
                 }
               >
-                {isInCart ? (
-                  <>
-                    <Trash2 className="w-4 h-4 mr-1 relative bottom-0.5" />{" "}
-                    <span>Remove</span>
-                  </>
-                ) : (
-                  "Add to Cart"
-                )}
+                {isInCart ? "Remove from Cart" : "Add to Cart"}
               </Button>
-              <Button className="w-1/2 py-4 ml-2">Buy Now</Button>
-            </div>
-            <span className=" block w-full h-[1px] bg-gray-600/20"></span>
-            <div className="condition">
-              <Table className="w-full">
-                <TableBody>
-                  <TableRow className="flex-wrap flex">
-                    <TableCell className="flex flex-col w-1/2 py-5 px-2 border-r">
-                      <h1 className=" font-medium mb-2">Delivery Option</h1>
-                      <div className="location flex items-end mb-2">
-                        <form className=" flex mr-2">
-                          <span className=" p-3 bg-[#4e1b61] text-white text-lg rounded-l z-0">
-                            <FaLocationDot />
-                          </span>
-                          <Input
-                            placeholder="000000"
-                            className=" -ml-0.5 h-11 w-20"
-                            minLength="6"
-                            maxLength="6"
-                          />
-                        </form>
-                      </div>
-                      <p className="text-xs text-gray-600/90">
-                        Please enter Pin code to check delivery time & Pay on
-                        delivery availability
-                      </p>
-                    </TableCell>
-                    <TableCell className="flex flex-col w-1/2 py-5 px-2">
-                      <h1 className=" font-medium mb-2">Shipping Details</h1>
-                      <p className="text-xs text-gray-600/90">
-                        Check Return Policy
-                      </p>
-                    </TableCell>
-                  </TableRow>
-                </TableBody>
-              </Table>
+              <Button className="sm:text-base text-sm sm:py-3 py-2 sm:px-8 px-6 bg-primary-red hover:bg-red-600">
+                Buy Now
+              </Button>
             </div>
           </div>
         </div>
       </div>
-      <div className="review-specs grid lg:grid-cols-4 grid-cols-1 lg:gap-10 gap-5 relative">
-        <div className="review col-span-2 lg:sticky top-28 h-fit">
-          <div className="post-review mb-5 flex items-center justify-between">
-            <Header title="Customer Reviews" />
-            {/* <Button></Button> */}
-            <Dialog>
-              <DialogTrigger className=" text-sm border px-3 py-2 rounded bg-[#4e1b61] text-white">
-                Add Review
-              </DialogTrigger>
-              <DialogContent className="bg-white">
-                <DialogHeader>
-                  <DialogTitle className="mb-2">Add your Review</DialogTitle>
-                  <div>
-                    <form onSubmit={handleSubmit}>
-                      <Label>Rating</Label>
-                      <Input
-                        name="rating"
-                        placeholder="Ratings"
-                        value={reviewData.rating}
-                        onChange={handleChange}
-                        className="mb-1"
-                        required
-                      />
-                      <Label>Review</Label>
-                      <Textarea
-                        name="review"
-                        placeholder="Add your Review here...."
-                        value={reviewData.review}
-                        onChange={handleChange}
-                        required
-                        className="mb-2"
-                      />
-                      <Button type="submit" disabled={isLoading}>
-                        {isLoading ? "Submitting..." : "Add Review"}
-                      </Button>
-                    </form>
-                    {isSuccess && <p>Review posted successfully!</p>}
-                    {isError && <p>Failed to post review. Please try again.</p>}
-                  </div>
-                </DialogHeader>
-              </DialogContent>
-            </Dialog>
-          </div>
-          <div>
-            {data?.response?.reviews?.map((review) => (
-              <div className="review-card shadow-none">
-                <Card className="w-full py-3 px-5">
-                  <div className="info flex items-center justify-between mb-3">
-                    <div className="user flex items-center">
-                      <Avatar className="mr-2.5">
-                        <AvatarImage src="https://github.com/shadcn.png" />
-                        <AvatarFallback>CN</AvatarFallback>
-                      </Avatar>
-                      <h1 className="font-medium">{review.postedBy}</h1>
-                    </div>
-                    <div className="rating flex text-gray-600/95 items-center">
-                      <FaStar className=" mr-1.5 text-yellow-500" />
-                      <span className=" font-semibold mt-0.5">
-                        {review.rating}
-                      </span>{" "}
-                    </div>
-                  </div>
-                  <div className="images flex mb-2 text-gray-600">
-                    {images.map((image, index) => (
-                      <div
-                        className="img-cont w-20 h-20 overflow-hidden rounded mx-1"
-                        key={index}
-                      >
-                        <Image
-                          width={1000}
-                          height={1000}
-                          src={image}
-                          alt=""
-                          className=" object-fill w-20 h-20"
-                        />
-                      </div>
-                    ))}
-                  </div>
-                  <CardDescription className=" text-gray-600">
-                    {review.review}
-                  </CardDescription>
-                </Card>
+      <div className="spec-review grid md:grid-cols-2 grid-cols-1 gap-10">
+        <div className="specs grid sm:grid-cols-2 grid-cols-1 gap-4 mb-6">
+          {data?.response?.specs.map((spec, index) => (
+            <div
+              key={index}
+              className="spec-card flex justify-between items-center rounded-xl md:p-6 p-4 sm:bg-transparent bg-white border md:border-none border-gray-200"
+            >
+              <div className="spec-name font-medium text-gray-700/95 md:text-lg text-base">
+                {spec.name}
               </div>
-            ))}
-          </div>
-          <div className="review-card shadow-none">
-            <Card className="w-full py-3 px-5">
-              <div className="info flex items-center justify-between mb-3">
-                <div className="user flex items-center">
-                  <Avatar className="mr-2.5">
-                    <AvatarImage src="https://github.com/shadcn.png" />
-                    <AvatarFallback>CN</AvatarFallback>
-                  </Avatar>
-                  <h1 className=" text-lg font-medium">John Doe</h1>
-                </div>
-                <div className="rating flex text-gray-600/95 items-center">
-                  <FaStar className=" mr-1.5 text-yellow-500" />
-                  <span className=" font-semibold mt-0.5">4.5</span>{" "}
-                </div>
+              <div className="spec-value font-medium text-gray-600/90 md:text-base text-sm">
+                {spec.value}
               </div>
-              <div className="images flex mb-2 text-gray-600"></div>
-              <CardDescription className=" text-gray-600">
-                Lorem ipsum dolor sit amet consectetur adipisicing elit.
-                Explicabo dignissimos tenetur ea sed delectus autem quibusdam!
-                Qui omnis commodi voluptatum laudantium consequatur fugiat earum
-                est, sint quisquam error eaque illum.
-              </CardDescription>
-            </Card>
-          </div>
+            </div>
+          ))}
         </div>
-        <div className="Specifications col-span-2 lg:sticky top-28 h-fit">
-          <Header title="Product Details" />
-          <div className="spec-cont w-full">
-            <Table className="w-full text-gray-600">
-              <TableBody>
-                {data?.response?.specs[0]?.split(",").map((spec, index) => {
-                  const [key, value] = spec.split(":");
-                  return (
-                    <TableRow key={index}>
-                      <TableCell className="w-44 flex items-start">
-                        {key.charAt(0).toUpperCase() + key.slice(1)}
-                      </TableCell>
-                      <TableCell className="w-full">{value}</TableCell>
-                    </TableRow>
-                  );
-                })}
-              </TableBody>
-            </Table>
-          </div>
+        <div className="reviews flex flex-col">
+          <h2 className="text-gray-800 font-semibold text-2xl mb-4">
+            Customer Reviews
+          </h2>
+          {data?.response?.reviews.length > 0 ? (
+            <div className="reviews-list flex flex-col gap-3">
+              {data?.response?.reviews.map((review, index) => (
+                <div
+                  key={index}
+                  className="review-item p-4 rounded-lg border border-gray-200"
+                >
+                  <div className="review-header flex justify-between items-center mb-2">
+                    <div className="flex items-center gap-2">
+                      <Avatar className="w-10 h-10">
+                        <AvatarImage src={review.userAvatar} alt="" />
+                        <AvatarFallback>U</AvatarFallback>
+                      </Avatar>
+                      <div className="user-info flex flex-col">
+                        <span className="font-medium text-gray-700">
+                          {review.username}
+                        </span>
+                        <span className="text-gray-500 text-sm">
+                          {review.date}
+                        </span>
+                      </div>
+                    </div>
+                    <div className="rating flex items-center text-gray-600">
+                      <FaStar className="text-yellow-500" />
+                      <span className="font-medium text-sm ml-1">
+                        {review.rating}
+                      </span>
+                    </div>
+                  </div>
+                  <p className="text-gray-600">{review.text}</p>
+                </div>
+              ))}
+            </div>
+          ) : (
+            <p className="text-gray-600">No reviews yet.</p>
+          )}
+          <Dialog>
+            <DialogTrigger asChild>
+              <Button className="mt-6 bg-primary-red hover:bg-red-600">
+                Write a Review
+              </Button>
+            </DialogTrigger>
+            <DialogContent>
+              <DialogHeader>
+                <DialogTitle>Write a Review</DialogTitle>
+              </DialogHeader>
+              <form onSubmit={handleSubmit}>
+                <div className="mb-4">
+                  <Label htmlFor="rating">Rating</Label>
+                  <Input
+                    id="rating"
+                    name="rating"
+                    type="number"
+                    value={reviewData.rating}
+                    onChange={handleChange}
+                    min="0"
+                    max="5"
+                    required
+                  />
+                </div>
+                <div className="mb-4">
+                  <Label htmlFor="review">Review</Label>
+                  <Textarea
+                    id="review"
+                    name="review"
+                    value={reviewData.review}
+                    onChange={handleChange}
+                    required
+                  />
+                </div>
+                <Button
+                  type="submit"
+                  className={
+                    "w-full " + (reviewLoading ? "bg-gray-400" : "bg-primary-red")
+                  }
+                  disabled={reviewLoading}
+                >
+                  {reviewLoading ? "Submitting..." : "Submit Review"}
+                </Button>
+              </form>
+            </DialogContent>
+          </Dialog>
         </div>
       </div>
     </section>

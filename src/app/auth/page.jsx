@@ -3,13 +3,15 @@ import { useState, useEffect } from "react";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
-import { toast, ToastContainer } from "react-toastify";
+import { ToastAction } from "@/components/ui/toast";
+import { useToast } from "@/components/ui/use-toast";
 import "react-toastify/dist/ReactToastify.css";
 import Link from "next/link";
 import { useLoginMutation } from "@/redux/slices/authSlice";
 import Cookies from "js-cookie";
 import { useRouter } from "next/navigation";
 import jwt from "jsonwebtoken";
+import { Toaster } from "@/components/ui/toaster";
 
 const Login = () => {
   const [emailOrPhoneNumber, setEmailOrPhoneNumber] = useState("");
@@ -17,6 +19,7 @@ const Login = () => {
   const [errors, setErrors] = useState({});
   const [login, { isLoading }] = useLoginMutation();
   const router = useRouter();
+  const { toast } = useToast();
 
   const validate = () => {
     const newErrors = {};
@@ -62,12 +65,15 @@ const Login = () => {
         } else {
           router.push("/");
         }
-
-        toast.success(response.message);
+        toast({ variant: "destructive", title: response.message });
+        // toast.success(response.message);
       }
     } catch (err) {
       console.log(err);
-      toast.error(err.data.message || "something went wrong !");
+      toast({
+        variant: "destructive",
+        description: err.data.message || "something went wrong !",
+      });
     }
   };
 
@@ -139,7 +145,8 @@ const Login = () => {
           <p className="text-blue-500">Forgot Password?</p>
         </div>
       </div>
-      <ToastContainer />
+      <Toaster />
+      {/* <ToastContainer /> */}
     </div>
   );
 };
