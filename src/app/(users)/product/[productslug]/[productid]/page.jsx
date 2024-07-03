@@ -35,7 +35,6 @@ import { addToCart, removeFromCart } from "@/redux/slices/cartSlice";
 import { useSelector, useDispatch } from "react-redux";
 import Image from "next/image";
 import { IoHeartDislikeSharp } from "react-icons/io5";
-import Loading from "@/components/common/Loading";
 import ProductPage from "@/components/user/skeleton/ProductPage";
 
 const ProductInfo = ({ params }) => {
@@ -48,7 +47,9 @@ const ProductInfo = ({ params }) => {
   const [reviewData, setReviewData] = useState({ rating: "", review: "" });
   const [postReview, { isLoading: reviewLoading, isSuccess, isError }] =
     usePostReviewMutation();
-
+  const { data, error, isLoading, refetch } =
+    useGetProductsByIDQuery(productId);
+  const id = data?.response?.id;
   const handleChange = (e) => {
     const { name, value } = e.target;
     setReviewData((prevData) => ({ ...prevData, [name]: value }));
@@ -71,20 +72,13 @@ const ProductInfo = ({ params }) => {
     }
   };
 
-  const { data, error, isLoading, refetch } = useGetProductsByIDQuery(
-    params.productid
-  );
-
   useEffect(() => {
-    const isInWishlist = wishlist.some(
-      (item) => item.id === data?.response?.id
-    );
+    const isInWishlist = wishlist.some((item) => item.id === id);
     setIsInWishlist(isInWishlist);
-    const isInCart = cart.some((item) => item.id === data?.response?.id);
+    const isInCart = cart.some((item) => item.id === id);
     setIsInCart(isInCart);
-  }, [wishlist, cart]);
+  }, [wishlist, cart, id]);
   console.log(cart, wishlist);
-  console.log(data?.response);
   const handleWishlistClick = () => {
     if (isInWishlist) {
       dispatch(removeFromWishlist(data?.response));
@@ -93,7 +87,7 @@ const ProductInfo = ({ params }) => {
     }
     setIsInWishlist(!isInWishlist);
   };
-
+  console.log(data?.response);
   const handleCartClick = () => {
     if (isInCart) {
       dispatch(removeFromCart(data?.response));
@@ -302,8 +296,8 @@ const ProductInfo = ({ params }) => {
             </Dialog>
           </div>
           <div>
-            {data?.response?.reviews?.map((review) => (
-              <div className="review-card shadow-none">
+            {data?.response?.reviews?.map((review, index) => (
+              <div className="review-card shadow-none" key={index}>
                 <Card className="w-full py-3 px-5">
                   <div className="info flex items-center justify-between md:mb-3 sm:mb-2">
                     <div className="user flex items-center">
@@ -320,7 +314,7 @@ const ProductInfo = ({ params }) => {
                       </span>{" "}
                     </div>
                   </div>
-                  {/* <div
+                  <div
                     className={
                       (review.images.length > 0 ? "flex mb-2 " : "hidden ") +
                       "images text-gray-600"
@@ -340,7 +334,7 @@ const ProductInfo = ({ params }) => {
                         />
                       </div>
                     ))}
-                  </div> */}
+                  </div>
                   <CardDescription className="text-gray-600">
                     {review.review}
                   </CardDescription>

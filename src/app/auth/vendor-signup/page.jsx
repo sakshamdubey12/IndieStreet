@@ -4,11 +4,12 @@ import { useRouter } from "next/navigation";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
-import { toast, ToastContainer } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
+import { useToast } from "@/components/ui/use-toast";
+import { Toaster } from "@/components/ui/toaster";
 import Link from "next/link";
 import { vendorSignup } from "@/redux/slices/vendorSlice";
 import { useDispatch } from "react-redux";
+import { EyeIcon, EyeOffIcon } from "lucide-react";
 
 const VendorRegister = () => {
   const [formData, setFormData] = useState({
@@ -27,9 +28,12 @@ const VendorRegister = () => {
   });
   const [categories, setCategories] = useState([]);
   const [errors, setErrors] = useState({});
+  const { toast } = useToast();
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
   const router = useRouter();
-const dispatch = useDispatch()
+  const dispatch = useDispatch();
   useEffect(() => {
     const fetchCategories = async () => {
       try {
@@ -94,12 +98,16 @@ const dispatch = useDispatch()
     }
     try {
       console.log(formData);
-    const resp =   dispatch(vendorSignup(formData));
-console.log(resp);
-      router.push("/vendor/dashboard");
+      const resp = dispatch(vendorSignup(formData));
+      router.push("/vendor");
+
+      toast({ title: response.message });
     } catch (err) {
       console.log(err);
-      toast.error(err.message || "Registration failed");
+      toast({
+        variant: "destructive",
+        description: err.data.message || "something went wrong !",
+      });
     }
   };
 
@@ -123,9 +131,19 @@ console.log(resp);
     return file ? URL.createObjectURL(file) : null;
   };
 
+  const handleTogglePasswordVisibility = () => {
+    setShowPassword((prevShowPassword) => !prevShowPassword);
+  };
+
+  const handleToggleConfirmPasswordVisibility = () => {
+    setShowConfirmPassword(
+      (prevShowConfirmPassword) => !prevShowConfirmPassword
+    );
+  };
+
   return (
     <div className="w-full min-h-screen frm flex justify-center items-center sm:px-6 px-3 py-10">
-      <div className="form sm:p-8 p-4 sm:w-fit w-full rounded-md bg-white shadow-md border border-[#4e1b6112]">
+      <div className="form sm:p-8 p-4 sm:w-1/2 w-full rounded-md bg-white shadow-md border border-[#4e1b6112]">
         <h1 className="md:text-3xl text-2xl font-semibold text-[#4E1B61] sm:mb-0.5">
           Register as a Vendor
         </h1>
@@ -134,7 +152,7 @@ console.log(resp);
         </p>
         <form className="sm:mb-5 mb-2.5" onSubmit={handleSubmit}>
           <div className="grid grid-cols-1 sm:grid-cols-2 w-full sm:gap-3">
-            <div className="element sm:mb-3 mb-1">
+            <div className="sm:mb-0 mb-1">
               <Label htmlFor="fullname" className=" sm:text-base text-xs">
                 Full Name
               </Label>
@@ -150,7 +168,7 @@ console.log(resp);
                 <p className="text-xs text-red-500">{errors.fullname}</p>
               )}
             </div>
-            <div className="element sm:mb-3 mb-1">
+            <div className="sm:mb-0 mb-1">
               <Label htmlFor="email" className=" sm:text-base text-xs">
                 Email
               </Label>
@@ -166,13 +184,15 @@ console.log(resp);
                 <p className="text-xs text-red-500">{errors.email}</p>
               )}
             </div>
-            <div className="element sm:mb-3 mb-1">
+            <div className="sm:mb-0 mb-1">
               <Label htmlFor="phoneNumber" className=" sm:text-base text-xs">
                 Phone Number
               </Label>
               <Input
                 type="text"
                 name="phoneNumber"
+                minLength={10}
+                maxLength={10}
                 placeholder="Phone Number"
                 className={`outline-none mt-0.5 rounded `}
                 value={formData.phoneNumber}
@@ -182,7 +202,44 @@ console.log(resp);
                 <p className="text-xs text-red-500">{errors.phoneNumber}</p>
               )}
             </div>
-            <div className="element sm:mb-3 mb-1">
+            <div className="sm:mb-0 mb-1">
+              <Label htmlFor="addressProve" className=" sm:text-base text-xs">
+                Address Proof
+              </Label>
+              <Input
+                type="file"
+                name="addressProve"
+                className={`outline-none mt-0.5 rounded w-full`}
+                onChange={handleFileChange}
+              />
+              {errors.addressProve && (
+                <p className="text-xs text-red-500">{errors.addressProve}</p>
+              )}
+              {getPreviewUrl(formData.addressProve) && (
+                <img
+                  src={getPreviewUrl(formData.addressProve)}
+                  alt="Address Proof Preview"
+                  className="mt-2 w-full h-auto max-w-xs"
+                />
+              )}
+            </div>
+            <div className="sm:mb-0 mb-1">
+              <Label htmlFor="businessName" className=" sm:text-base text-xs">
+                Business Name
+              </Label>
+              <Input
+                type="text"
+                name="businessName"
+                placeholder="Business Name"
+                className={`outline-none mt-0.5 rounded `}
+                value={formData.businessName}
+                onChange={handleInputChange}
+              />
+              {errors.businessName && (
+                <p className="text-xs text-red-500">{errors.businessName}</p>
+              )}
+            </div>
+            <div className="sm:mb-0 mb-1">
               <Label
                 htmlFor="businessCategory"
                 className=" sm:text-base text-xs"
@@ -208,13 +265,15 @@ console.log(resp);
                 </p>
               )}
             </div>
-            <div className="element sm:mb-3 mb-1">
+            <div className="sm:mb-0 mb-1">
               <Label htmlFor="pan" className=" sm:text-base text-xs">
                 PAN Number
               </Label>
               <Input
                 type="text"
                 name="pan"
+                minLength={10}
+                maxLength={10}
                 placeholder="PAN Number"
                 className={`outline-none mt-0.5 rounded `}
                 value={formData.pan}
@@ -224,13 +283,36 @@ console.log(resp);
                 <p className="text-xs text-red-500">{errors.pan}</p>
               )}
             </div>
-            <div className="element sm:mb-3 mb-1">
+            <div className="sm:mb-0 mb-1">
+              <Label htmlFor="bankDoc" className=" sm:text-base text-xs">
+                Bank Document
+              </Label>
+              <Input
+                type="file"
+                name="bankDoc"
+                className={`outline-none mt-0.5 rounded w-full`}
+                onChange={handleFileChange}
+              />
+              {errors.bankDoc && (
+                <p className="text-xs text-red-500">{errors.bankDoc}</p>
+              )}
+              {getPreviewUrl(formData.bankDoc) && (
+                <img
+                  src={getPreviewUrl(formData.bankDoc)}
+                  alt="Bank Document Preview"
+                  className="mt-2 w-full h-auto max-w-xs"
+                />
+              )}
+            </div>
+            <div className="sm:mb-0 mb-1">
               <Label htmlFor="gst" className=" sm:text-base text-xs">
                 GST Number
               </Label>
               <Input
                 type="text"
                 name="gst"
+                minLength={15}
+                maxLength={15}
                 placeholder="GST Number"
                 className={`outline-none mt-0.5 rounded `}
                 value={formData.gst}
@@ -240,122 +322,89 @@ console.log(resp);
                 <p className="text-xs text-red-500">{errors.gst}</p>
               )}
             </div>
-            <div className="element sm:mb-3 mb-1">
-              <Label htmlFor="businessName" className=" sm:text-base text-xs">
-                Business Name
+            <div className="sm:mb-0 mb-1">
+              <Label htmlFor="gstDoc" className=" sm:text-base text-xs">
+                GST Document
               </Label>
               <Input
-                type="text"
-                name="businessName"
-                placeholder="Business Name"
-                className={`outline-none mt-0.5 rounded `}
-                value={formData.businessName}
-                onChange={handleInputChange}
+                type="file"
+                name="gstDoc"
+                className={`outline-none mt-0.5 rounded w-full`}
+                onChange={handleFileChange}
               />
-              {errors.businessName && (
-                <p className="text-xs text-red-500">{errors.businessName}</p>
+              {errors.gstDoc && (
+                <p className="text-xs text-red-500">{errors.gstDoc}</p>
+              )}
+              {getPreviewUrl(formData.gstDoc) && (
+                <img
+                  src={getPreviewUrl(formData.gstDoc)}
+                  alt="GST Document Preview"
+                  className="mt-2 w-full h-auto max-w-xs"
+                />
               )}
             </div>
-            <div className="element sm:mb-3 mb-1">
+            <div className="sm:mb-0 mb-1">
               <Label htmlFor="password" className=" sm:text-base text-xs">
                 Password
               </Label>
-              <Input
-                type="password"
-                name="password"
-                placeholder="Password"
-                className={`outline-none mt-0.5 rounded `}
-                value={formData.password}
-                onChange={handleInputChange}
-              />
+
+              <div className="pass flex relative">
+                <Input
+                  type={showPassword ? "text" : "password"}
+                  name="password"
+                  placeholder="Password"
+                  className={`outline-none mt-0.5 rounded `}
+                  value={formData.password}
+                  onChange={handleInputChange}
+                />
+                <Button
+                  type="button"
+                  onClick={handleTogglePasswordVisibility}
+                  className="bg-white hover:bg-white text-black hover:text-black border-0 hover:border-0 absolute grid place-items-center right-1 top-1 h-9"
+                >
+                  {showPassword ? (
+                    <EyeOffIcon className="w-[20px] h-[20px] absolute" />
+                  ) : (
+                    <EyeIcon className="w-[20px] h-[20px] absolute" />
+                  )}
+                </Button>
+              </div>
               {errors.password && (
                 <p className="text-xs text-red-500">{errors.password}</p>
               )}
             </div>
-            <div className="element sm:mb-3 mb-1">
+            <div className="sm:mb-0 mb-1">
               <Label
                 htmlFor="confirmPassword"
                 className=" sm:text-base text-xs"
               >
                 Confirm Password
               </Label>
-              <Input
-                type="password"
-                name="confirmPassword"
-                placeholder="Confirm Password"
-                className={`outline-none mt-0.5 rounded `}
-                value={formData.confirmPassword}
-                onChange={handleInputChange}
-              />
+              <div className="pass flex relative">
+                <Input
+                  type={showConfirmPassword ? "text" : "password"}
+                  name="confirmPassword"
+                  placeholder="Confirm Password"
+                  className={`outline-none mt-0.5 rounded `}
+                  value={formData.confirmPassword}
+                  onChange={handleInputChange}
+                />
+                <Button
+                  type="button"
+                  onClick={handleToggleConfirmPasswordVisibility}
+                  className="bg-white hover:bg-white text-black hover:text-black border-0 hover:border-0 absolute grid place-items-center right-1 top-1 h-9"
+                >
+                  {showConfirmPassword ? (
+                    <EyeOffIcon className="w-[20px] h-[20px] absolute" />
+                  ) : (
+                    <EyeIcon className="w-[20px] h-[20px] absolute" />
+                  )}
+                </Button>
+              </div>
               {errors.confirmPassword && (
-                <p className="text-xs text-red-500">
-                  {errors.confirmPassword}
-                </p>
+                <p className="text-xs text-red-500">{errors.confirmPassword}</p>
               )}
             </div>
-          </div>
-          <div className="sm:mb-3 mb-1">
-            <Label htmlFor="gstDoc" className=" sm:text-base text-xs">
-              GST Document
-            </Label>
-            <Input
-              type="file"
-              name="gstDoc"
-              className={`outline-none mt-0.5 rounded w-full`}
-              onChange={handleFileChange}
-            />
-            {errors.gstDoc && (
-              <p className="text-xs text-red-500">{errors.gstDoc}</p>
-            )}
-            {getPreviewUrl(formData.gstDoc) && (
-              <img
-                src={getPreviewUrl(formData.gstDoc)}
-                alt="GST Document Preview"
-                className="mt-2 w-full h-auto max-w-xs"
-              />
-            )}
-          </div>
-          <div className="sm:mb-3 mb-1">
-            <Label htmlFor="bankDoc" className=" sm:text-base text-xs">
-              Bank Document
-            </Label>
-            <Input
-              type="file"
-              name="bankDoc"
-              className={`outline-none mt-0.5 rounded w-full`}
-              onChange={handleFileChange}
-            />
-            {errors.bankDoc && (
-              <p className="text-xs text-red-500">{errors.bankDoc}</p>
-            )}
-            {getPreviewUrl(formData.bankDoc) && (
-              <img
-                src={getPreviewUrl(formData.bankDoc)}
-                alt="Bank Document Preview"
-                className="mt-2 w-full h-auto max-w-xs"
-              />
-            )}
-          </div>
-          <div className="sm:mb-3 mb-1">
-            <Label htmlFor="addressProve" className=" sm:text-base text-xs">
-              Address Proof
-            </Label>
-            <Input
-              type="file"
-              name="addressProve"
-              className={`outline-none mt-0.5 rounded w-full`}
-              onChange={handleFileChange}
-            />
-            {errors.addressProve && (
-              <p className="text-xs text-red-500">{errors.addressProve}</p>
-            )}
-            {getPreviewUrl(formData.addressProve) && (
-              <img
-                src={getPreviewUrl(formData.addressProve)}
-                alt="Address Proof Preview"
-                className="mt-2 w-full h-auto max-w-xs"
-              />
-            )}
           </div>
           <Button
             type="submit"
@@ -366,12 +415,12 @@ console.log(resp);
         </form>
         <p className="text-sm">
           Already have an account?{" "}
-          <Link href="/vendor/login" className="text-[#4E1B61]">
+          <Link href="/auth" className="text-blue-600">
             Login
           </Link>
         </p>
       </div>
-      <ToastContainer />
+      <Toaster />
     </div>
   );
 };

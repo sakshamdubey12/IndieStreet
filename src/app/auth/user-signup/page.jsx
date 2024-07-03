@@ -3,12 +3,13 @@ import { useState, useEffect } from "react";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
-import { toast, ToastContainer } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
+import { useToast } from "@/components/ui/use-toast";
+import { Toaster } from "@/components/ui/toaster";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import Cookies from "js-cookie";
 import { useRegisterUserMutation } from "@/redux/slices/authSlice";
+import { EyeIcon, EyeOffIcon } from "lucide-react";
 
 const UserRegister = () => {
   const [fullName, setFullName] = useState("");
@@ -19,6 +20,9 @@ const UserRegister = () => {
   const [errors, setErrors] = useState({});
   const [registerUser, { isLoading }] = useRegisterUserMutation();
   const router = useRouter();
+  const { toast } = useToast();
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
   useEffect(() => {
     setErrors({});
@@ -58,14 +62,24 @@ const UserRegister = () => {
     try {
       const userData = { fullname: fullName, email, phoneNumber, password };
       const response = await registerUser(userData).unwrap();
-      console.log(response);
-      toast.success(response.message);
+      toast({ title: response.message });
       Cookies.set("token", response.token, { expires: 7 });
       router.push("/");
     } catch (err) {
       console.log(err);
-      toast.error(err.data.message || "Registration failed");
+      toast({
+        variant: "destructive",
+        description: err.data.message || "something went wrong !",
+      });
     }
+  };
+
+  const handleTogglePasswordVisibility = () => {
+    setShowPassword((prevShowPassword) => !prevShowPassword);
+  };
+
+  const handleToggleConfirmPasswordVisibility = () => {
+    setShowConfirmPassword((prevShowConfirmPassword) => !prevShowConfirmPassword);
   };
 
   return (
@@ -117,6 +131,8 @@ const UserRegister = () => {
             <Input
               type="text"
               name="phoneNumber"
+              minLength={10}
+              maxLength={10}
               placeholder="Phone Number"
               className={`outline-none mt-0.5 rounded sm:text-base text-sm `}
               value={phoneNumber}
@@ -130,14 +146,27 @@ const UserRegister = () => {
             <Label htmlFor="password" className=" sm:text-base text-xs">
               Password
             </Label>
-            <Input
-              type="password"
-              name="password"
-              placeholder="Password"
-              className={`outline-none mt-0.5 sm:text-base text-sm`}
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-            />
+            <div className="pass flex relative">
+              <Input
+                type={showPassword ? "text" : "password"}
+                name="password"
+                placeholder="Password"
+                className={`outline-none mt-0.5 sm:text-base text-sm`}
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+              />
+              <Button
+                type="button"
+                onClick={handleTogglePasswordVisibility}
+                className="bg-white hover:bg-white text-black hover:text-black border-0 hover:border-0 absolute grid place-items-center right-1 top-1 h-9"
+              >
+                {showPassword ? (
+                  <EyeOffIcon className="w-[20px] h-[20px] absolute" />
+                ) : (
+                  <EyeIcon className="w-[20px] h-[20px] absolute" />
+                )}
+              </Button>
+            </div>
             {errors.password && (
               <p className="text-xs text-red-500">{errors.password}</p>
             )}
@@ -146,14 +175,27 @@ const UserRegister = () => {
             <Label htmlFor="confirmPassword" className=" sm:text-base text-xs">
               Confirm Password
             </Label>
-            <Input
-              type="password"
-              name="confirmPassword"
-              placeholder="Confirm Password"
-              className={`outline-none mt-0.5 sm:text-base text-sm`}
-              value={confirmPassword}
-              onChange={(e) => setConfirmPassword(e.target.value)}
-            />
+            <div className="pass flex relative">
+              <Input
+                type={showConfirmPassword ? "text" : "password"}
+                name="confirmPassword"
+                placeholder="Confirm Password"
+                className={`outline-none mt-0.5 sm:text-base text-sm`}
+                value={confirmPassword}
+                onChange={(e) => setConfirmPassword(e.target.value)}
+              />
+              <Button
+                type="button"
+                onClick={handleToggleConfirmPasswordVisibility}
+                className="bg-white hover:bg-white text-black hover:text-black border-0 hover:border-0 absolute grid place-items-center right-1 top-1 h-9"
+              >
+                {showConfirmPassword ? (
+                  <EyeOffIcon className="w-[20px] h-[20px] absolute" />
+                ) : (
+                  <EyeIcon className="w-[20px] h-[20px] absolute" />
+                )}
+              </Button>
+            </div>
             {errors.confirmPassword && (
               <p className="text-xs text-red-500">{errors.confirmPassword}</p>
             )}
@@ -184,7 +226,7 @@ const UserRegister = () => {
           </p>
         </div>
       </div>
-      <ToastContainer />
+      <Toaster />
     </div>
   );
 };

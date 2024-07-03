@@ -1,17 +1,17 @@
 "use client";
-import { useState, useEffect } from "react";
+import { useState, useRef } from "react";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
-import { ToastAction } from "@/components/ui/toast";
 import { useToast } from "@/components/ui/use-toast";
+import { Toaster } from "@/components/ui/toaster";
 import "react-toastify/dist/ReactToastify.css";
 import Link from "next/link";
 import { useLoginMutation } from "@/redux/slices/authSlice";
 import Cookies from "js-cookie";
 import { useRouter } from "next/navigation";
 import jwt from "jsonwebtoken";
-import { Toaster } from "@/components/ui/toaster";
+import { EyeIcon, EyeOffIcon } from "lucide-react";
 
 const Login = () => {
   const [emailOrPhoneNumber, setEmailOrPhoneNumber] = useState("");
@@ -20,6 +20,7 @@ const Login = () => {
   const [login, { isLoading }] = useLoginMutation();
   const router = useRouter();
   const { toast } = useToast();
+  const [showPassword, setShowPassword] = useState(false);
 
   const validate = () => {
     const newErrors = {};
@@ -65,8 +66,7 @@ const Login = () => {
         } else {
           router.push("/");
         }
-        toast({ variant: "destructive", title: response.message });
-        // toast.success(response.message);
+        toast({ title: response.message });
       }
     } catch (err) {
       console.log(err);
@@ -75,6 +75,10 @@ const Login = () => {
         description: err.data.message || "something went wrong !",
       });
     }
+  };
+
+  const handleTogglePasswordVisibility = () => {
+    setShowPassword((prevShowPassword) => !prevShowPassword);
   };
 
   return (
@@ -112,14 +116,27 @@ const Login = () => {
             <Label htmlFor="password" className=" sm:text-base text-xs">
               Password
             </Label>
-            <Input
-              type="password"
-              name="password"
-              placeholder="Password"
-              className={`outline-none mt-0.5 sm:text-base text-sm`}
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-            />
+            <div className="pass flex relative">
+              <Input
+                type={showPassword ? "text" : "password"}
+                name="password"
+                placeholder="Password"
+                className={`outline-none mt-0.5 sm:text-base text-sm pr-10`}
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+              />
+              <Button
+                type="button"
+                onClick={handleTogglePasswordVisibility}
+                className="bg-white hover:bg-white text-black hover:text-black border-0 hover:border-0 absolute grid place-items-center right-1 top-1 h-9"
+              >
+                {showPassword ? (
+                  <EyeOffIcon className="w-[20px] h-[20px] absolute" />
+                ) : (
+                  <EyeIcon className="w-[20px] h-[20px] absolute" />
+                )}
+              </Button>
+            </div>
             {errors.password && (
               <p className="text-xs text-red-500">{errors.password}</p>
             )}
@@ -146,7 +163,6 @@ const Login = () => {
         </div>
       </div>
       <Toaster />
-      {/* <ToastContainer /> */}
     </div>
   );
 };

@@ -7,9 +7,10 @@ import wishlistSlice, { clearWishlist } from "@/redux/slices/wishlistSlice";
 import ProductCard from "@/components/user/ProductCard";
 import { HeartIcon } from "lucide-react";
 
-const wishlist = () => {
+const Wishlist = () => {
   const dispatch = useDispatch();
   const wishlistItems = useSelector((state) => state.wishlist);
+  console.log(wishlistItems);
 
   const clearWishlistItems = () => {
     dispatch(clearWishlist());
@@ -57,4 +58,4 @@ const wishlist = () => {
   );
 };
 
-export default wishlist;
+export default Wishlist;

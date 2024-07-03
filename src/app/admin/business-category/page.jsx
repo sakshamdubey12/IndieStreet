@@ -15,14 +15,13 @@ import {
   DialogContent,
   DialogHeader,
   DialogTitle,
-  DialogTrigger,
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { useToast } from "@/components/ui/use-toast";
 
 const Categories = (props) => {
   const [categoryName, setCategoryName] = useState("");
-  const [isDialogOpen, setIsDialogOpen] = useState(false); // Manage dialog open state
+  const [isDialogOpen, setIsDialogOpen] = useState(false); 
   const { data: businessCategories, refetch } = useGetBusinessCategoryQuery();
   const [addCategory, { isLoading, isError }] = useAddCategoryMutation();
   const { toast } = useToast();
@@ -38,7 +37,7 @@ const Categories = (props) => {
       });
       setCategoryName("");
       refetch();
-      setIsDialogOpen(false); // Close the dialog on success
+      setIsDialogOpen(false); 
     } catch (error) {
       toast({
         title: "Error",

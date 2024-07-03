@@ -102,7 +102,6 @@ const Products = ({ params }) => {
     const list = productList.filter((product) => {
       return product.categoryName.toUpperCase() === productName.toUpperCase();
     });
-    console.log(list);
     return sortProducts(list);
   };
 

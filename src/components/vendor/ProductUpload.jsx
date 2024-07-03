@@ -3,7 +3,8 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "../ui/textarea";
-import { toast } from "react-toastify";
+import { useToast } from "@/components/ui/use-toast";
+import { Toaster } from "@/components/ui/toaster";
 
 import {
   Select,
@@ -14,18 +15,13 @@ import {
   SelectValue,
 } from "../ui/select";
 import { useGetProductCategoryQuery } from "@/redux/slices/ProductCategorySlice";
-import { useUploadProductMutation } from "@/redux/slices/ProductUpload"; 
+import { useUploadProductMutation } from "@/redux/slices/ProductUpload";
 
 const ProductUpload = ({ onSuccess }) => {
-  const {
-    data: categoryData,
-    error,
-    isLoading,
-    refetch,
-  } = useGetProductCategoryQuery();
+  const { toast } = useToast();
+  const { data: categoryData } = useGetProductCategoryQuery();
 
-  const [uploadProduct] = useUploadProductMutation(); // Use the mutation hook
-
+  const [uploadProduct] = useUploadProductMutation();
   const [productName, setProductName] = useState("");
   const [productDescription, setProductDescription] = useState("");
   const [price, setPrice] = useState("");
@@ -102,13 +98,15 @@ const ProductUpload = ({ onSuccess }) => {
       formData.append("images", image);
     });
     formData.append("speciality", speciality);
-    const specsFormatted = specs.map(spec => `${spec.key}:${spec.value}`).join(",");
+    const specsFormatted = specs
+      .map((spec) => `${spec.key}:${spec.value}`)
+      .join(",");
     formData.append("specs", specsFormatted);
-   
+
     try {
       const response = await uploadProduct(formData).unwrap();
 
-      toast.success(response.data.message);
+      toast({ title: response.message });
       setProductName("");
       setProductDescription("");
       setPrice("");
@@ -122,8 +120,10 @@ const ProductUpload = ({ onSuccess }) => {
       setErrors({});
       onSuccess();
     } catch (error) {
-      toast.error(error.data.message || "error occured");
-      console.error("Failed to upload product:", error);
+      toast({
+        variant: "destructive",
+        description: err.data.message || "error occured",
+      });
     }
   };
 
@@ -267,7 +267,9 @@ const ProductUpload = ({ onSuccess }) => {
         <div className="flex flex-wrap">
           {specs.map((item, index) => (
             <div key={index} className="relative m-2 p-2 border rounded">
-              <span className=" text-sm">{item.key} : {item.value}</span>
+              <span className=" text-sm">
+                {item.key} : {item.value}
+              </span>
               <button
                 type="button"
                 className="absolute top-0 right-0 text-red-500"
@@ -278,9 +280,7 @@ const ProductUpload = ({ onSuccess }) => {
             </div>
           ))}
         </div>
-        {errors.specs && (
-          <p className="text-red-500 text-xs">{errors.specs}</p>
-        )}
+        {errors.specs && <p className="text-red-500 text-xs">{errors.specs}</p>}
       </div>
       <div className="flex mb-2">
         <div className="element mr-1 w-1/2">
@@ -317,8 +317,9 @@ const ProductUpload = ({ onSuccess }) => {
           )}
         </div>
       </div>
-      <Button type="submit" className=" w-full">Add Product</Button>
-    
+      <Button type="submit" className=" w-full">
+        Add Product
+      </Button>
     </form>
   );
 };
