@@ -17,7 +17,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { useGetAllProductsQuery } from "@/redux/slices/ProductUpload";
+import { useGetAllProductsQuery } from "@/redux/slices/vendor/ProductUpload";
 import { Label } from "../ui/label";
 import { Input } from "../ui/input";
 import { Textarea } from "../ui/textarea";

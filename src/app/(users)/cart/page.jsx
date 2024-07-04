@@ -22,7 +22,7 @@ import {
   increaseQuantity,
   decreaseQuantity,
   clearCart,
-} from "@/redux/slices/cartSlice";
+} from "@/redux/slices/user/cartSlice";
 import Link from "next/link";
 import Image from "next/image";
 

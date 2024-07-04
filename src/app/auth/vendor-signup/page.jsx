@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/button";
 import { useToast } from "@/components/ui/use-toast";
 import { Toaster } from "@/components/ui/toaster";
 import Link from "next/link";
-import { vendorSignup } from "@/redux/slices/vendorSlice";
+import { vendorSignup } from "@/redux/slices/vendor/vendorSlice";
 import { useDispatch } from "react-redux";
 import { EyeIcon, EyeOffIcon } from "lucide-react";
 

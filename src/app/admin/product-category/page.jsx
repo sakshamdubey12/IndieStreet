@@ -6,7 +6,7 @@ import {
   useDeleteProductCategoryMutation,
   useUpdateProductCategoryMutation,
   useMarkProductCategoryInactiveMutation,
-} from "@/redux/slices/ProductCategorySlice";
+} from "@/redux/slices/admin/ProductCategorySlice";
 import DisplayTable from "@/components/admin/DisplayTable";
 import PageTitle from "@/components/common/PageTitle";
 import { Button } from "@/components/ui/button";

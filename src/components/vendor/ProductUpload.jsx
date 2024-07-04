@@ -14,8 +14,8 @@ import {
   SelectTrigger,
   SelectValue,
 } from "../ui/select";
-import { useGetProductCategoryQuery } from "@/redux/slices/ProductCategorySlice";
-import { useUploadProductMutation } from "@/redux/slices/ProductUpload";
+import { useGetProductCategoryQuery } from "@/redux/slices/admin/ProductCategorySlice";
+import { useUploadProductMutation } from "@/redux/slices/vendor/ProductUpload";
 
 const ProductUpload = ({ onSuccess }) => {
   const { toast } = useToast();

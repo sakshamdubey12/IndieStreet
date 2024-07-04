@@ -1,15 +1,13 @@
 "use client";
 import Link from "next/link";
-import { Input } from "../ui/input";
 import {
   HeartIcon,
-  SearchIcon,
   ShoppingCartIcon,
   User2Icon,
 } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
-import { logout } from "@/redux/slices/authSlice";
+import { logout } from "@/redux/slices/common/authSlice";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -40,8 +38,8 @@ import {
   CommandItem,
   CommandList,
 } from "@/components/ui/command";
-import { useGetProductsByCategoryQuery } from "@/redux/slices/GetAllProduct";
-import { useGetProductCategoryQuery } from "@/redux/slices/ProductCategorySlice";
+import { useGetProductsByCategoryQuery } from "@/redux/slices/user/GetAllProduct";
+import { useGetProductCategoryQuery } from "@/redux/slices/admin/ProductCategorySlice";
 import Image from "next/image";
 import { useSelector } from "react-redux";
 

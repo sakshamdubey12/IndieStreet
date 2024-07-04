@@ -1,7 +1,6 @@
 import Link from "next/link";
 import Header from "./Header";
-import { Card, CardContent } from "@/components/ui/card";
-import { useGetProductsByCategoryQuery } from "@/redux/slices/GetAllProduct";
+import { useGetProductsByCategoryQuery } from "@/redux/slices/user/GetAllProduct";
 import ProductCard from "./ProductCard";
 
 const ProductDisplay = ({ title, url }) => {

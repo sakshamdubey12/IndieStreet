@@ -9,7 +9,7 @@ import {
   CarouselPrevious,
 } from "@/components/ui/carousel";
 import Header from "./Header";
-import { useGetProductCategoryQuery } from "@/redux/slices/ProductCategorySlice";
+import { useGetProductCategoryQuery } from "@/redux/slices/admin/ProductCategorySlice";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";

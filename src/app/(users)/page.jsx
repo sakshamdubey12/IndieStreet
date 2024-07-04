@@ -6,7 +6,7 @@ import ProductDisplay from "@/components/user/ProductDisplay";
 import Style from "@/components/user/Style";
 import TrendingCollection from "@/components/user/TrendingCollection";
 import React, { useEffect } from "react";
-import { useGetProductCategoryQuery } from "@/redux/slices/ProductCategorySlice";
+import { useGetProductCategoryQuery } from "@/redux/slices/admin/ProductCategorySlice";
 
 const Home = () => {
   const { data } = useGetProductCategoryQuery();

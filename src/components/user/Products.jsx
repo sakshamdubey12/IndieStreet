@@ -1,6 +1,5 @@
 import Header from "./Header";
-import { FilterIcon, HeartIcon, ShoppingBagIcon, SortDescIcon } from "lucide-react";
-import { useEffect, useState } from "react";
+import { FilterIcon, SortDescIcon } from "lucide-react";
 import {
   Select,
   SelectContent,
@@ -33,7 +32,7 @@ import { useSelector, useDispatch } from "react-redux";
 
 import { useRouter } from "next/navigation";
 
-const Products = (props) => {
+const Products = () => {
 
 
   return (

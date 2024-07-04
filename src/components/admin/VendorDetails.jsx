@@ -1,6 +1,6 @@
 "use client";
 import React, { useEffect, useState } from "react";
-import { useGetVendorDetailsQuery } from "@/redux/slices/GetAllVendor";
+import { useGetVendorDetailsQuery } from "@/redux/slices/admin/GetAllVendor";
 import { columns } from "./vendor-table/columns";
 import { DataTable } from "./vendor-table/data-table";
 import { transformData } from "./vendor-table/transformData";

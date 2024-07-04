@@ -14,8 +14,8 @@ import { Button } from "../ui/button";
 import {
   addToWishlist,
   removeFromWishlist,
-} from "@/redux/slices/wishlistSlice";
-import { addToCart, removeFromCart } from "@/redux/slices/cartSlice";
+} from "@/redux/slices/user/wishlistSlice";
+import { addToCart, removeFromCart } from "@/redux/slices/user/cartSlice";
 import { useSelector, useDispatch } from "react-redux";
 import { useEffect, useState } from "react";
 import Image from "next/image";

@@ -12,7 +12,7 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import DisplayTable from "@/components/vendor/DisplayTable";
-import { openDialog, closeDialog, triggerRefetch } from "@/redux/slices/dialogSlice";
+import { openDialog, closeDialog, triggerRefetch } from "@/redux/slices/common/dialogSlice";
 
 const Products = () => {
   const dispatch = useDispatch();

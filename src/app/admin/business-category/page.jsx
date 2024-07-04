@@ -6,7 +6,7 @@ import {
   useDeleteCategoryMutation,
   useUpdateCategoryMutation,
   useMarkCategoryInactiveMutation,
-} from "@/redux/slices/BusinessCategorySlice";
+} from "@/redux/slices/admin/BusinessCategorySlice";
 import DisplayTable from "@/components/admin/DisplayTable";
 import PageTitle from "@/components/common/PageTitle";
 import { Button } from "@/components/ui/button";
@@ -19,7 +19,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { useToast } from "@/components/ui/use-toast";
 
-const Categories = (props) => {
+const Categories = () => {
   const [categoryName, setCategoryName] = useState("");
   const [isDialogOpen, setIsDialogOpen] = useState(false); 
   const { data: businessCategories, refetch } = useGetBusinessCategoryQuery();

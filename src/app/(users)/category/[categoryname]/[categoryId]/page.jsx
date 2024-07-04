@@ -29,13 +29,13 @@ import {
 } from "@/components/ui/card";
 import { FaStar } from "react-icons/fa";
 import { useSelector, useDispatch } from "react-redux";
-import { useGetProductsByCategoryQuery } from "@/redux/slices/GetAllProduct";
-import { setSortBy } from "@/redux/slices/productFilterSortSlice";
-import { addToCart } from "@/redux/slices/cartSlice";
+import { useGetProductsByCategoryQuery } from "@/redux/slices/user/GetAllProduct";
+import { setSortBy } from "@/redux/slices/user/productFilterSortSlice";
+import { addToCart } from "@/redux/slices/user/cartSlice";
 import {
   addToWishlist,
   removeFromWishlist,
-} from "@/redux/slices/wishlistSlice";
+} from "@/redux/slices/user/wishlistSlice";
 import ProductCard from "@/components/user/ProductCard";
 
 const Products = ({ params }) => {
@@ -99,8 +99,8 @@ const Products = ({ params }) => {
   };
 
   const filterByCategory = (productList) => {
-    const list = productList.filter((product) => {
-      return product.categoryName.toUpperCase() === productName.toUpperCase();
+    const list = productList?.filter((product) => {
+      return product?.categoryName?.toUpperCase() === productName.toUpperCase();
     });
     return sortProducts(list);
   };

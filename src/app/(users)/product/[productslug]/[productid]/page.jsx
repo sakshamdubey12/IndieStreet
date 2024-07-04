@@ -15,7 +15,7 @@ import { FaLocationDot } from "react-icons/fa6";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Table, TableBody, TableCell, TableRow } from "@/components/ui/table";
-import { useGetProductsByIDQuery } from "@/redux/slices/GetSingleProduct";
+import { useGetProductsByIDQuery } from "@/redux/slices/user/GetSingleProduct";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
   Dialog,
@@ -26,12 +26,12 @@ import {
 } from "@/components/ui/dialog";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import { usePostReviewMutation } from "@/redux/slices/ProductReview";
+import { usePostReviewMutation } from "@/redux/slices/user/ProductReview";
 import {
   addToWishlist,
   removeFromWishlist,
-} from "@/redux/slices/wishlistSlice";
-import { addToCart, removeFromCart } from "@/redux/slices/cartSlice";
+} from "@/redux/slices/user/wishlistSlice";
+import { addToCart, removeFromCart } from "@/redux/slices/user/cartSlice";
 import { useSelector, useDispatch } from "react-redux";
 import Image from "next/image";
 import { IoHeartDislikeSharp } from "react-icons/io5";
