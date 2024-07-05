@@ -39,7 +39,7 @@ import ProductPage from "@/components/user/skeleton/ProductPage";
 
 const ProductInfo = ({ params }) => {
   const dispatch = useDispatch();
-  const productId = params.productid;
+  const id = params.productid;
   const wishlist = useSelector((state) => state.wishlist);
   const [isInWishlist, setIsInWishlist] = useState(false);
   const cart = useSelector((state) => state.cart);
@@ -47,14 +47,11 @@ const ProductInfo = ({ params }) => {
   const [reviewData, setReviewData] = useState({ rating: "", review: "" });
   const [postReview, { isLoading: reviewLoading, isSuccess, isError }] =
     usePostReviewMutation();
-  const { data, error, isLoading, refetch } =
-    useGetProductsByIDQuery(productId);
-  const id = data?.response?.id;
+  const { data, error, isLoading, refetch } = useGetProductsByIDQuery(id);
   const handleChange = (e) => {
     const { name, value } = e.target;
     setReviewData((prevData) => ({ ...prevData, [name]: value }));
   };
-
   const handleSubmit = async (e) => {
     e.preventDefault();
     const ratingValue = Number(reviewData.rating);
@@ -62,7 +59,6 @@ const ProductInfo = ({ params }) => {
       alert("wrong format of review");
       return;
     }
-
     try {
       await postReview({ reviewData }).unwrap();
       console.log("Review posted successfully!");
@@ -78,7 +74,6 @@ const ProductInfo = ({ params }) => {
     const isInCart = cart.some((item) => item.id === id);
     setIsInCart(isInCart);
   }, [wishlist, cart, id]);
-  console.log(cart, wishlist);
   const handleWishlistClick = () => {
     if (isInWishlist) {
       dispatch(removeFromWishlist(data?.response));
@@ -87,7 +82,7 @@ const ProductInfo = ({ params }) => {
     }
     setIsInWishlist(!isInWishlist);
   };
-  console.log(data?.response);
+
   const handleCartClick = () => {
     if (isInCart) {
       dispatch(removeFromCart(data?.response));
@@ -96,6 +91,7 @@ const ProductInfo = ({ params }) => {
     }
     setIsInCart(!isInCart);
   };
+
   if (isLoading) {
     return <ProductPage />;
   }

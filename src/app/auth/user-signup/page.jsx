@@ -8,7 +8,7 @@ import { Toaster } from "@/components/ui/toaster";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import Cookies from "js-cookie";
-import { useRegisterUserMutation } from "@/redux/slices/authSlice";
+import { useRegisterUserMutation } from "@/redux/slices/common/authSlice";
 import { EyeIcon, EyeOffIcon } from "lucide-react";
 
 const UserRegister = () => {
@@ -79,7 +79,9 @@ const UserRegister = () => {
   };
 
   const handleToggleConfirmPasswordVisibility = () => {
-    setShowConfirmPassword((prevShowConfirmPassword) => !prevShowConfirmPassword);
+    setShowConfirmPassword(
+      (prevShowConfirmPassword) => !prevShowConfirmPassword
+    );
   };
 
   return (

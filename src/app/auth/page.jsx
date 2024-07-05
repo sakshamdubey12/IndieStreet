@@ -7,7 +7,7 @@ import { useToast } from "@/components/ui/use-toast";
 import { Toaster } from "@/components/ui/toaster";
 import "react-toastify/dist/ReactToastify.css";
 import Link from "next/link";
-import { useLoginMutation } from "@/redux/slices/authSlice";
+import { useLoginMutation } from "@/redux/slices/common/authSlice";
 import Cookies from "js-cookie";
 import { useRouter } from "next/navigation";
 import jwt from "jsonwebtoken";

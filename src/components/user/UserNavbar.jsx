@@ -1,10 +1,6 @@
 "use client";
 import Link from "next/link";
-import {
-  HeartIcon,
-  ShoppingCartIcon,
-  User2Icon,
-} from "lucide-react";
+import { HeartIcon, ShoppingCartIcon, User2Icon } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { logout } from "@/redux/slices/common/authSlice";
@@ -70,8 +66,10 @@ const UserNavbar = () => {
     }
 
     const handleScroll = () => {
-      const scrollHeight = Math.floor(window.scrollY);
-      setLastScroll(scrollHeight);
+      const scrollHeight = window.scrollY;
+      // console.log(scrollHeight);
+      // console.log(scrollHeight > 102);
+      setLastScroll(scrollHeight > 102);
     };
 
     window.addEventListener("scroll", handleScroll);
@@ -131,7 +129,7 @@ const UserNavbar = () => {
         </div>
         <div
           className={
-            (lastScroll > 104
+            (lastScroll
               ? "bg-[#ffffff8b] backdrop-blur md:py-1 py-1"
               : "bg-white md:py-2 py-1") +
             ` !px-[5%] lower text-[#4E1B61] transition-all ease-in-out duration-200`
@@ -159,9 +157,7 @@ const UserNavbar = () => {
                   <li
                     key={category._id}
                     className={
-                      (lastScroll > 104
-                        ? "after:-bottom-1"
-                        : "after:-bottom-2") +
+                      (lastScroll ? "after:-bottom-1" : "after:-bottom-2") +
                       " h-16 w-max relative after:absolute after:rounded-t-xl after:w-0 after:h-1 after:bg-[#4E1B61] after:left-0 hover:after:w-full after:ease-in-out after:duration-300 after:transition-all"
                     }
                   >
@@ -180,12 +176,14 @@ const UserNavbar = () => {
                     <NavigationMenu>
                       <NavigationMenuList>
                         <NavigationMenuItem>
-                          <NavigationMenuTrigger className={
-                      (lastScroll > 104
-                        ? "after:-bottom-1"
-                        : "after:-bottom-2") +
-                      " h-16 w-max relative after:absolute after:rounded-t-xl !after:w-0 after:h-1 after:bg-[#4E1B61] after:left-0 hover:after:w-full after:ease-in-out after:duration-300 after:transition-all"
-                    }>
+                          <NavigationMenuTrigger
+                            className={
+                              (lastScroll
+                                ? "after:-bottom-1"
+                                : "after:-bottom-2") +
+                              " h-16 w-max relative after:absolute after:rounded-t-xl !after:w-0 after:h-1 after:bg-[#4E1B61] after:left-0 hover:after:w-full after:ease-in-out after:duration-300 after:transition-all"
+                            }
+                          >
                             Categories
                           </NavigationMenuTrigger>
                           <NavigationMenuContent className="bg-white grid grid-cols-1 py-2 !border border-[#4e1b6156]">
@@ -262,7 +260,7 @@ const UserNavbar = () => {
             >
               <li
                 className={
-                  (lastScroll > 104 ? " " : "") +
+                  (lastScroll ? " " : "") +
                   "lg:ml-3 flex justify-center items-center rounded-full border-[#4E1B61] duration-150 ease-in-out transition-all"
                 }
               >
@@ -273,11 +271,14 @@ const UserNavbar = () => {
                         href="/wishlist"
                         className=" sm:p-2.5 p-1 flex relative"
                       >
-                        <HeartIcon fill="#4E1B61" className="sm:w-5 w-4 sm:h-5 h-4" />
+                        <HeartIcon
+                          fill="#4E1B61"
+                          className="sm:w-5 w-4 sm:h-5 h-4"
+                        />
                         {wishlistLength > 0 ? (
                           <span
                             className={
-                              (lastScroll > 104
+                              (lastScroll
                                 ? "bg-[#4E1B61] border-[#4E1B61] text-[#fff]"
                                 : "bg-white") +
                               " absolute text-xs sm:top-0 -top-2 sm:right-0 -right-1.5 font-medium border rounded-full text-center w-5 h-5 flex justify-center items-center"
@@ -298,7 +299,7 @@ const UserNavbar = () => {
               </li>
               <li
                 className={
-                  (lastScroll > 104 ? " " : "") +
+                  (lastScroll ? " " : "") +
                   "ml-0.5 flex justify-center items-center rounded-full border-[#4E1B61] duration-150 ease-in-out transition-all"
                 }
               >
@@ -309,11 +310,14 @@ const UserNavbar = () => {
                         href="/cart"
                         className=" sm:p-2.5 p-1 flex relative"
                       >
-                        <ShoppingCartIcon fill="#4E1B61" className="sm:w-5 w-4 sm:h-5 h-4" />
+                        <ShoppingCartIcon
+                          fill="#4E1B61"
+                          className="sm:w-5 w-4 sm:h-5 h-4"
+                        />
                         {cartLength > 0 ? (
                           <span
                             className={
-                              (lastScroll > 104
+                              (lastScroll
                                 ? "bg-[#4E1B61] border-[#4E1B61] text-[#fff]"
                                 : "bg-white") +
                               " absolute text-xs sm:top-0 -top-2 sm:right-0 -right-1.5 font-medium border rounded-full text-center w-5 h-5 flex justify-center items-center"
@@ -337,7 +341,7 @@ const UserNavbar = () => {
                   <DropdownMenu>
                     <DropdownMenuTrigger
                       className={
-                        (lastScroll > 104 ? " " : "") +
+                        (lastScroll ? " " : "") +
                         "ml-0.5 flex justify-center items-center rounded-full border-[#4E1B61] duration-150 ease-in-out transition-all outline-none"
                       }
                     >
@@ -358,7 +362,7 @@ const UserNavbar = () => {
                   <Link
                     href="/auth"
                     className={
-                      (lastScroll > 104
+                      (lastScroll
                         ? "bg-[#4E1B61] text-white "
                         : "bg-transparent ") +
                       "lg:ml-2 text-[#4E1B61] px-5 py-2 my-auto rounded sm:text-sm text-xs ease-in-out transition-all duration-150 border border-[#4E1B61] font-medium"

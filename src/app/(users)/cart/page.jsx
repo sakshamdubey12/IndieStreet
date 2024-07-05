@@ -22,6 +22,7 @@ import {
   increaseQuantity,
   decreaseQuantity,
   clearCart,
+  updateQuantity, // Add this action to handle input changes
 } from "@/redux/slices/user/cartSlice";
 import Link from "next/link";
 import Image from "next/image";
@@ -30,15 +31,25 @@ const Cart = () => {
   const dispatch = useDispatch();
   const cartItems = useSelector((state) => state.cart);
   console.log(cartItems);
+
   const handleIncreaseQuantity = (id) => {
     dispatch(increaseQuantity({ id }));
   };
+
   const handleDecreaseQuantity = (id) => {
     dispatch(decreaseQuantity({ id }));
   };
+
+  const handleInputChange = (id, quantity) => {
+    if (quantity >= 1) {
+      dispatch(updateQuantity({ id, quantity }));
+    }
+  };
+
   const handleClear = () => {
     dispatch(clearCart());
   };
+
   const removeFromCartFn = (id) => {
     dispatch(removeFromCart({ id }));
   };
@@ -117,8 +128,10 @@ const Cart = () => {
                         </Button>
                         <Input
                           value={item.quantity}
-                          readOnly
                           className="text-center w-12 rounded-none"
+                          onChange={(e) =>
+                            handleInputChange(item.id, parseInt(e.target.value))
+                          }
                         />
                         <Button
                           className=" !text-xl border border-[#4E1B61] h-10 w-10 rounded-l-none relative right-0.5"

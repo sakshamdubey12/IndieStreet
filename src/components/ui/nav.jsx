@@ -10,7 +10,7 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { useSelectedLayoutSegment } from "next/navigation";
-import { logout } from "@/redux/slices/authSlice";
+import { logout } from "@/redux/slices/common/authSlice";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 

@@ -53,6 +53,12 @@ const cartSlice = createSlice({
         state.splice(index, 1);
       }
     },
+    updateQuantity: (state, action) => {
+      const product = state.find((product) => product.id === action.payload.id);
+      if (product) {
+        product.quantity = action.payload.quantity;
+      }
+    },
   },
 });
 
@@ -63,5 +69,6 @@ export const {
   decreaseQuantity,
   clearCart,
   removeItem,
+  updateQuantity, 
 } = cartSlice.actions;
 export default cartSlice.reducer;
