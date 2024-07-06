@@ -53,7 +53,7 @@ const ProductCard = ({ product }) => {
   };
 
   return (
-    <Card className="hover:shadow-[0_0_10px_rgba(78,27,97,0.20)] transition-shadow duration-200 p-0 rounded overflow-hidden cursor-pointer border m-0 md:h-[23rem]">
+    <Card className="hover:shadow-[0_0_10px_rgba(78,27,97,0.20)] transition-shadow duration-200 p-0 rounded overflow-hidden cursor-pointer border m-0 md:h-[21rem] h-[18rem]">
       <CardHeader className="p-0 relative top-0 space-y-0">
         <div className="icons absolute top-3 right-3 flex flex-col justify-center items-center">
           <button
@@ -77,7 +77,8 @@ const ProductCard = ({ product }) => {
           height={1000}
           src={product.images[0]}
           alt={product.name}
-          className="w-full md:h-52 sm:h-44 h-40 object-cover rounded-lg"
+          className="w-full md:h-44 sm:h-40 h-36 object-cover rounded-lg"
+          // /w-full md:h-52 sm:h-44 h-36 object-cover rounded-lg
         />
         {/* <button className="absolute bottom-0 py-2 md:text-sm text-xs bg-white/90 font-medium hover:bg-[#4E1B61] hover:text-white duration-150 ease-in-out transition-all w-full">
           View Product
