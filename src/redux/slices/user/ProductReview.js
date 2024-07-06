@@ -29,9 +29,10 @@ export const reviewsApi = createApi({
   endpoints: (builder) => ({
     postReview: builder.mutation({
       query: ({ reviewData }) => {
+        console.log(reviewData);
         const { userId } = getToken();
         return {
-          url: `/user/review/post-review/${userId}`,
+          url: `/user/review/post-review`,
           method: "POST",
           body: reviewData,
         };

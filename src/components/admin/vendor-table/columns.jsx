@@ -140,12 +140,13 @@ export const columns = [
   {
     accessorKey: "verifyVendor",
     header: () => <p className="w-16 text-center">Verify</p>,
-    cell: ({ row }) => (
-      <div className="flex items-center justify-center w-16">
+    cell: ({ row }) => {
+      console.log(row);
+     return <div className="flex items-center justify-center w-16">
         <button className="p-2 text-[#4E1B61] rounded">
           <CheckCircle2Icon />
         </button>
       </div>
-    ),
+    },
   },
 ];

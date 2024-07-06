@@ -38,20 +38,22 @@ import { IoHeartDislikeSharp } from "react-icons/io5";
 import ProductPage from "@/components/user/skeleton/ProductPage";
 
 const ProductInfo = ({ params }) => {
+  const id =  params.productid
   const dispatch = useDispatch();
-  const id = params.productid;
   const wishlist = useSelector((state) => state.wishlist);
   const [isInWishlist, setIsInWishlist] = useState(false);
   const cart = useSelector((state) => state.cart);
   const [isInCart, setIsInCart] = useState(false);
-  const [reviewData, setReviewData] = useState({ rating: "", review: "" });
+  const [reviewData, setReviewData] = useState({ rating: "", review: "" ,productId:""});
   const [postReview, { isLoading: reviewLoading, isSuccess, isError }] =
-    usePostReviewMutation();
+  usePostReviewMutation();
   const { data, error, isLoading, refetch } = useGetProductsByIDQuery(id);
+  console.log(data?.response.allReviews);
   const handleChange = (e) => {
     const { name, value } = e.target;
     setReviewData((prevData) => ({ ...prevData, [name]: value }));
   };
+  reviewData.productId= params.productid;
   const handleSubmit = async (e) => {
     e.preventDefault();
     const ratingValue = Number(reviewData.rating);
@@ -60,7 +62,7 @@ const ProductInfo = ({ params }) => {
       return;
     }
     try {
-      await postReview({ reviewData }).unwrap();
+      await postReview({productId:id, reviewData }).unwrap();
       console.log("Review posted successfully!");
       setReviewData({ rating: "", review: "" });
     } catch (error) {
@@ -292,7 +294,7 @@ const ProductInfo = ({ params }) => {
             </Dialog>
           </div>
           <div>
-            {data?.response?.reviews?.map((review, index) => (
+            {isLoading?<>loading...</>:data.response.allReviews && data.response.allReviews.map((review, index) => (
               <div className="review-card shadow-none" key={index}>
                 <Card className="w-full py-3 px-5">
                   <div className="info flex items-center justify-between md:mb-3 sm:mb-2">
@@ -301,7 +303,7 @@ const ProductInfo = ({ params }) => {
                         <AvatarImage src="https://github.com/shadcn.png" />
                         <AvatarFallback>CN</AvatarFallback>
                       </Avatar>
-                      <h1 className="font-medium">{review.postedBy}</h1>
+                      <h1 className="font-medium">{review.fullName}</h1>
                     </div>
                     <div className="rating flex text-gray-600/95 items-center">
                       <FaStar className=" mr-1.5 text-yellow-500" />
@@ -310,7 +312,7 @@ const ProductInfo = ({ params }) => {
                       </span>{" "}
                     </div>
                   </div>
-                  <div
+                  {/* <div
                     className={
                       (review.images.length > 0 ? "flex mb-2 " : "hidden ") +
                       "images text-gray-600"
@@ -330,15 +332,16 @@ const ProductInfo = ({ params }) => {
                         />
                       </div>
                     ))}
-                  </div>
+                  </div> */}
                   <CardDescription className="text-gray-600">
                     {review.review}
                   </CardDescription>
                 </Card>
               </div>
-            ))}
+ 
+ ))}
           </div>
-          <div className="review-card shadow-none">
+          {/* <div className="review-card shadow-none">
             <Card className="w-full py-3 px-5">
               <div className="info flex items-center justify-between md:mb-3 sm:mb-2 mb-1">
                 <div className="user flex items-center">
@@ -365,7 +368,7 @@ const ProductInfo = ({ params }) => {
                 est, sint quisquam error eaque illum.
               </CardDescription>
             </Card>
-          </div>
+          </div> */}
         </div>
         <div className="Specifications col-span-2 lg:sticky top-28 h-fit">
           <Header title="Product Details" />
