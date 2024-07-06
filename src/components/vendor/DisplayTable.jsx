@@ -1,7 +1,7 @@
 // components/vendor/DisplayTable.js
 "use client";
 import React, { useEffect, useState } from "react";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import {
   Table,
   TableBody,
@@ -37,6 +37,9 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "../ui/tooltip";
+import { deleteProduct, toggleIsActive } from "@/redux/slices/vendor/manageProduct";
+import { toast } from "react-toastify";
+import { useRouter } from "next/navigation";
 
 const DisplayTable = () => {
   const { data, error, isLoading, refetch } = useGetAllProductsQuery();
@@ -44,27 +47,55 @@ const DisplayTable = () => {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [selectedProduct, setSelectedProduct] = useState(null);
   const refetchTrigger = useSelector((state) => state.dialog.refetch);
-
+  const dispatch = useDispatch();
+  const route = useRouter()
   useEffect(() => {
     if (data && data.success) {
       setProducts(data.products);
     }
   }, [data]);
-
   useEffect(() => {
     refetch();
   }, [refetchTrigger]);
 
-  const handleViewDetail = (product) => {
-    setSelectedProduct(product);
-    setIsDialogOpen(true);
+  const handleViewDetail = (e,product) => {
+  e.preventDefault()
+  route.push(`${process.env.NEXT_PUBLIC_FRONTEND_URL}/vendor/products/${product._id}`)
   };
-
+  useEffect(() => {
+    const fetchProducts = async () => {
+      if (data && data.success) {
+        setProducts(data.products);
+      }
+    };
+    fetchProducts();
+  }, [dispatch]);
   const parseSpecs = (specsString) => {
     return specsString.split(",").map((spec) => {
       const [key, value] = spec.split(":");
       return { key: key.trim(), value: value.trim() };
     });
+  };
+  const { status, err  } = useSelector((state) => state.product);
+
+  const handleToggle = async (productId) => {
+    console.log(productId);
+    const result = await dispatch(toggleIsActive(productId));
+    console.log(result);
+    if (toggleIsActive.fulfilled.match(result)) {
+      toast.success(result.payload.message);
+    } else {
+      toast.error(result?.error.message || 'Error occurred');
+    }
+  };
+
+  const handleDelete = async (productId) => {
+    const result = await dispatch(deleteProduct(productId));
+    if (deleteProduct.fulfilled.match(result)) {
+      toast.success(result.payload.message);
+    } else {
+      toast.error(result.payload.message || 'Error occurred');
+    }
   };
 
   return (
@@ -82,7 +113,9 @@ const DisplayTable = () => {
           </TableRow>
         </TableHeader>
         <TableBody>
-          {products.map((product) => (
+          {products.map((product) => 
+          
+          (
             <TableRow key={product.name}>
               <TableCell>{product.name}</TableCell>
               <TableCell>{product.productCategory}</TableCell>
@@ -91,35 +124,21 @@ const DisplayTable = () => {
               <TableCell>{product.offer}</TableCell>
               <TableCell>{product.offeredPrice}</TableCell>
               <TableCell>
-                <TooltipProvider>
-                  <Tooltip>
-                    <TooltipTrigger asChild>
-                      <Button>
-                        <BsTrash />{" "}
+
+          
+                      <Button onClick={(e)=>handleDelete(product._id)} >
+                   Delete
                       </Button>
-                    </TooltipTrigger>
-                    <TooltipContent className="bg-[#f3f3f3]">
-                      <p>Delete item permanently </p>
-                    </TooltipContent>
-                  </Tooltip>
-                </TooltipProvider>
-                <TooltipProvider>
-                  <Tooltip>
-                    <TooltipTrigger asChild>
-                      <Button className="mx-3">
-                        <MdCancel />
+
+                      <Button className="mx-3" onClick={(e)=>handleToggle(product._id)} >
+                        {product.isActive?"Active" :"Inactive"}
                       </Button>
-                    </TooltipTrigger>
-                    <TooltipContent className="bg-[#f3f3f3]">
-                      <p>Inactive the product </p>
-                    </TooltipContent>
-                  </Tooltip>
-                </TooltipProvider>
+                
               </TableCell>
               <TableCell>
                 <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-                  <Button onClick={() => handleViewDetail(product)}>
-                    View Detail
+                  <Button onClick={(e) => handleViewDetail(e,product)}>
+                    View & Update
                   </Button>
                   <DialogContent className="bg-white max-w-2xl max-h-[80vh] overflow-y-auto scroll">
                     <DialogHeader>
