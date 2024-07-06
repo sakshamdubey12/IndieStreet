@@ -340,7 +340,7 @@ const UserNavbar = () => {
                 {isAuth ? (
                   <Link
                     className="ml-0.5 flex justify-center items-center rounded-full border-[#4E1B61] duration-150 ease-in-out transition-all outline-none"
-                    href="/"
+                    href="/customer-profile"
                   >
                     <User2Icon
                       fill="#4E1B61"
