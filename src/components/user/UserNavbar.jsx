@@ -338,27 +338,36 @@ const UserNavbar = () => {
               </li>
               <li className={"flex justify-center items-center lg:ml-3 ml-1.5"}>
                 {isAuth ? (
-                  <DropdownMenu>
-                    <DropdownMenuTrigger
-                      className={
-                        (lastScroll ? " " : "") +
-                        "ml-0.5 flex justify-center items-center rounded-full border-[#4E1B61] duration-150 ease-in-out transition-all outline-none"
-                      }
-                    >
-                      <User2Icon
-                        fill="#4E1B61"
-                        className=" sm:w-5 sm:h-5 w-3.5 h-3.5"
-                      />
-                    </DropdownMenuTrigger>
-                    <DropdownMenuContent className=" bg-white sm:text-sm text-xs w-44">
-                      <DropdownMenuLabel>{email}</DropdownMenuLabel>
-                      <DropdownMenuSeparator />
-                      <DropdownMenuItem onClick={handleLogout}>
-                        Logout
-                      </DropdownMenuItem>
-                    </DropdownMenuContent>
-                  </DropdownMenu>
+                  <Link
+                    className="ml-0.5 flex justify-center items-center rounded-full border-[#4E1B61] duration-150 ease-in-out transition-all outline-none"
+                    href="/customer-profile"
+                  >
+                    <User2Icon
+                      fill="#4E1B61"
+                      className=" sm:w-5 sm:h-5 w-3.5 h-3.5"
+                    />
+                  </Link>
                 ) : (
+                  // <DropdownMenu>
+                  //   <DropdownMenuTrigger
+                  //     className={
+                  //       (lastScroll ? " " : "") +
+                  //       "ml-0.5 flex justify-center items-center rounded-full border-[#4E1B61] duration-150 ease-in-out transition-all outline-none"
+                  //     }
+                  //   >
+                  //     <User2Icon
+                  //       fill="#4E1B61"
+                  //       className=" sm:w-5 sm:h-5 w-3.5 h-3.5"
+                  //     />
+                  //   </DropdownMenuTrigger>
+                  //   <DropdownMenuContent className=" bg-white sm:text-sm text-xs w-44">
+                  //     <DropdownMenuLabel>{email}</DropdownMenuLabel>
+                  //     <DropdownMenuSeparator />
+                  //     <DropdownMenuItem onClick={handleLogout}>
+                  //       Logout
+                  //     </DropdownMenuItem>
+                  //   </DropdownMenuContent>
+                  // </DropdownMenu>
                   <Link
                     href="/auth"
                     className={

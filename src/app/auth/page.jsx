@@ -159,7 +159,7 @@ const Login = () => {
               Sign Up
             </Link>
           </p>
-          <p className="text-blue-500">Forgot Password?</p>
+          <Link href="/auth/forgot-password" className="text-blue-500">Forgot Password?</Link>
         </div>
       </div>
       <Toaster />
