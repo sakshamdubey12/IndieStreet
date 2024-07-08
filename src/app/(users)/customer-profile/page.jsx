@@ -4,7 +4,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import Header from "@/components/user/Header";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { Pen } from "lucide-react";
+import { Pen, Trash } from "lucide-react";
 import { Label } from "@/components/ui/label";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import {
@@ -20,7 +20,7 @@ import {
 const Page = () => {
   const [edit, setEdit] = useState(false);
   const [name, setName] = useState("Customer Name");
-  const [email, setEmail] = useState("Customer Email");
+  const [email, setEmail] = useState("Customer@email.com");
   const [phone, setPhone] = useState("123456789");
   const [newAddress, setNewAddress] = useState({
     address: "",
@@ -66,6 +66,10 @@ const Page = () => {
     });
     setIsDialogOpen(false); // Close the dialog
   };
+
+  const handleDeleteAddress=(index)=>{
+    setSavedAddress(savedAddress.filter((_, i) => i !== index));
+  }
 
   return (
     <>
@@ -237,7 +241,16 @@ const Page = () => {
           </div>
         </div>
         <div className="flex mt-3">
-          <RadioGroup defaultValue="option-one">
+          <RadioGroup defaultValue="primary">
+           <div className="flex space-x-2 mb-2">
+              <div className="add-1 border">
+                <Label htmlFor="primary" className="w-full h-full">
+                  Primary Address
+                </Label>
+              </div>
+              <RadioGroupItem value="primary" id="primary" />
+            </div>
+
             {savedAddress.map((address,index)=>(
 
             <div key={index} className="flex space-x-2 mb-2">
@@ -247,6 +260,13 @@ const Page = () => {
                 </Label>
               </div>
               <RadioGroupItem value={`option-${index}`} id={`option-${index}`} />
+               <Button
+                  className="ml-2"
+                  onClick={() => handleDeleteAddress(index)}
+                  size="sm"
+                >
+                  <Trash  className="w-4 h-4" />
+                </Button>
             </div>
             ))}
           </RadioGroup>
