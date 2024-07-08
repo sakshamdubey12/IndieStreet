@@ -26,13 +26,11 @@ const ProductUpload = ({ onSuccess }) => {
   const [productDescription, setProductDescription] = useState("");
   const [price, setPrice] = useState("");
   const [offer, setOffer] = useState("");
-  const [rating, setRating] = useState("");
+
   const [productCategory, setProductCategory] = useState("");
   const [stocks, setStocks] = useState("");
   const [images, setImages] = useState([]);
-  const [specs, setSpecs] = useState([]);
-  const [specsKey, setSpecsKey] = useState("");
-  const [specsValue, setSpecsValue] = useState("");
+  const [weight, setWeight] = useState("");
   const [speciality, setSpeciality] = useState("");
   const [errors, setErrors] = useState({});
 
@@ -48,17 +46,15 @@ const ProductUpload = ({ onSuccess }) => {
     setImages(newImages);
   };
 
-  const handleAddSpecs = () => {
-    if (specsKey && specsValue) {
-      setSpecs([...specs, { key: specsKey, value: specsValue }]);
-      setSpecsKey("");
-      setSpecsValue("");
+  const handleAddWeight = () => {
+    if (weight) {
+      setWeight(weight);
+      setWeight("");
     }
   };
 
-  const handleRemoveSpecs = (index) => {
-    const newSpecs = specs.filter((_, i) => i !== index);
-    setSpecs(newSpecs);
+  const handleRemoveWeight = (index) => {
+    setWeight("");
   };
 
   const validate = () => {
@@ -68,12 +64,11 @@ const ProductUpload = ({ onSuccess }) => {
       newErrors.productDescription = "Product Description is required";
     if (!price) newErrors.price = "Price is required";
     if (!offer) newErrors.offer = "Offer is required";
-    if (!rating) newErrors.rating = "Rating is required";
     if (!productCategory)
       newErrors.productCategory = "Product Category is required";
     if (!stocks) newErrors.stocks = "Stocks is required";
     if (images.length < 1) newErrors.images = "At least one image is required";
-    if (specs.length < 1) newErrors.specs = "At least one specs is required";
+    if (!weight) newErrors.weight = "Weight is required";
     if (!speciality) newErrors.speciality = "Speciality is required";
     return newErrors;
   };
@@ -91,38 +86,32 @@ const ProductUpload = ({ onSuccess }) => {
     formData.append("description", productDescription);
     formData.append("price", price);
     formData.append("offer", offer);
-    formData.append("rating", rating);
     formData.append("productCategory", productCategory);
     formData.append("stocks", stocks);
     images.forEach((image, index) => {
       formData.append("images", image);
     });
     formData.append("speciality", speciality);
-    const specsFormatted = specs
-      .map((spec) => `${spec.key}:${spec.value}`)
-      .join(",");
-    formData.append("specs", specsFormatted);
+    formData.append("weight", weight);
 
     try {
       const response = await uploadProduct(formData).unwrap();
-
       toast({ title: response.message });
       setProductName("");
       setProductDescription("");
       setPrice("");
       setOffer("");
-      setRating("");
       setProductCategory("");
       setStocks("");
       setImages([]);
-      setSpecs([]);
+      setWeight("");
       setSpeciality("");
       setErrors({});
       onSuccess();
     } catch (error) {
       toast({
         variant: "destructive",
-        description: err.data.message || "error occured",
+        description: err.data.message || "error occurred",
       });
     }
   };
@@ -191,18 +180,7 @@ const ProductUpload = ({ onSuccess }) => {
             <p className="text-red-500 text-xs">{errors.images}</p>
           )}
         </div>
-        <div className="element">
-          <Label>Rating</Label>
-          <Input
-            placeholder="Rating"
-            className="mb-2"
-            value={rating}
-            onChange={(e) => setRating(e.target.value)}
-          />
-          {errors.rating && (
-            <p className="text-red-500 text-xs">{errors.rating}</p>
-          )}
-        </div>
+
       </div>
       <div className="flex flex-wrap">
         {images.map((image, index) => (
@@ -240,47 +218,17 @@ const ProductUpload = ({ onSuccess }) => {
           <p className="text-red-500 text-xs">{errors.speciality}</p>
         )}
       </div>
-      <div className="flex flex-col mb-2">
-        <Label>Specs</Label>
-        <div className="element flex items-center mt-1">
-          <Input
-            placeholder="Key"
-            className="mb-2"
-            value={specsKey}
-            onChange={(e) => setSpecsKey(e.target.value)}
-          />
-          <span className="mx-1 mb-2">:</span>
-          <Input
-            placeholder="Value"
-            className="mb-2 mr-1"
-            value={specsValue}
-            onChange={(e) => setSpecsValue(e.target.value)}
-          />
-          <button
-            type="button"
-            className="bg-[#4e1b61] text-sm text-white px-3 py-2.5 w-96 mb-2 rounded"
-            onClick={handleAddSpecs}
-          >
-            Add Specs
-          </button>
-        </div>
-        <div className="flex flex-wrap">
-          {specs.map((item, index) => (
-            <div key={index} className="relative m-2 p-2 border rounded">
-              <span className=" text-sm">
-                {item.key} : {item.value}
-              </span>
-              <button
-                type="button"
-                className="absolute top-0 right-0 text-red-500"
-                onClick={() => handleRemoveSpecs(index)}
-              >
-                &times;
-              </button>
-            </div>
-          ))}
-        </div>
-        {errors.specs && <p className="text-red-500 text-xs">{errors.specs}</p>}
+      <div className="element mb-2">
+        <Label>Weight (in KG)</Label>
+        <Input
+          placeholder="Weight in KG"
+          className="mb-2"
+          value={weight}
+          onChange={(e) => setWeight(e.target.value)}
+        />
+        {errors.weight && (
+          <p className="text-red-500 text-xs">{errors.weight}</p>
+        )}
       </div>
       <div className="flex mb-2">
         <div className="element mr-1 w-1/2">
