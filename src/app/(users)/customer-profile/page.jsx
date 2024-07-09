@@ -18,10 +18,13 @@ import {
 } from "@/components/ui/dialog";
 
 const Page = () => {
-  const [edit, setEdit] = useState(false);
+  const [editName, setEditName] = useState(false);
+  const [editEmail, setEditEmail] = useState(false);
+  const [editPhone, setEditPhone] = useState(false);
   const [name, setName] = useState("Customer Name");
   const [email, setEmail] = useState("Customer@email.com");
-  const [phone, setPhone] = useState("123456789");
+  const [phone, setPhone] = useState("1234567890");
+  const [phoneError, setPhoneError] = useState("");
   const [newAddress, setNewAddress] = useState({
     address: "",
     pincode: "",
@@ -32,8 +35,36 @@ const Page = () => {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [savedAddress, setSavedAddress]= useState([]);
 
+  const handleEditName = () => {
+    setEditName(!editName);
+  };
+  const handleEditEmail = () => {
+    setEditEmail(!editEmail);
+  };
+  const handleEditPhone = () => {
+    setEditPhone(!editPhone);
+  };
+
   const handleEdit = () => {
-    setEdit(!edit);
+    if (editName) {
+      setEditName(false);
+    }
+    if (editEmail) {
+      setEditEmail(false);
+    }
+    if (editPhone) {
+      if (validatePhone(phone)) {
+        setEditPhone(false);
+        setPhoneError("");
+      } else {
+        setPhoneError("Invalid phone number. Must be 10 digits.");
+      }
+    }
+  };
+
+  const validatePhone = (phone) => {
+    const phoneRegex = /^[6-9]\d{9}$/;
+    return phoneRegex.test(phone);
   };
 
   const handleAddressChange = (e) => {
@@ -45,18 +76,17 @@ const Page = () => {
   };
 
   const handleSaveAddress = () => {
-    if(
+    if (
       !newAddress.address ||
       !newAddress.pincode ||
       !newAddress.city ||
       !newAddress.state ||
       !newAddress.country
-    ){
-      alert("Please fill out all the field")
+    ) {
+      alert("Please fill out all the fields");
       return;
     }
-    setSavedAddress([...savedAddress,newAddress])
-    // Clear the address form after saving
+    setSavedAddress([...savedAddress, newAddress]);
     setNewAddress({
       address: "",
       pincode: "",
@@ -64,12 +94,12 @@ const Page = () => {
       state: "",
       country: ""
     });
-    setIsDialogOpen(false); // Close the dialog
+    setIsDialogOpen(false);
   };
 
-  const handleDeleteAddress=(index)=>{
+  const handleDeleteAddress = (index) => {
     setSavedAddress(savedAddress.filter((_, i) => i !== index));
-  }
+  };
 
   return (
     <>
@@ -90,12 +120,12 @@ const Page = () => {
               <Input
                 type="text"
                 value={name}
-                readOnly={!edit}
+                readOnly={!editName}
                 className="mt-1 block w-full p-2 pr-10 border-0 border-b sm:text-sm outline-none"
                 onChange={(e) => setName(e.target.value)}
               />
               <Button
-                onClick={handleEdit}
+                onClick={handleEditName}
                 className="absolute right-2 top-1/2 transform -translate-y-1/2 bg-transparent p-0"
               >
                 <Pen className="w-4 h-4 text-gray-600" />
@@ -110,13 +140,13 @@ const Page = () => {
               <Input
                 type="email"
                 value={email}
-                readOnly={!edit}
+                readOnly={!editEmail}
                 className="mt-1 block w-full p-2 pr-10 border-0 border-b sm:text-sm outline-none"
                 onChange={(e) => setEmail(e.target.value)}
               />
               <Button
                 className="absolute right-2 top-1/2 transform -translate-y-1/2 bg-transparent p-0"
-                onClick={handleEdit}
+                onClick={handleEditEmail}
               >
                 <Pen className="w-4 h-4 text-gray-600" />
               </Button>
@@ -128,29 +158,30 @@ const Page = () => {
             </Label>
             <div className="relative">
               <Input
-                type="number"
+                type="text"
                 value={phone}
-                readOnly={!edit}
+                readOnly={!editPhone}
                 className="mt-1 block w-full p-2 pr-10 border-0 border-b sm:text-sm outline-none"
                 onChange={(e) => setPhone(e.target.value)}
               />
               <Button
                 className="absolute right-2 top-1/2 transform -translate-y-1/2 bg-transparent p-0"
-                onClick={handleEdit}
+                onClick={handleEditPhone}
               >
                 <Pen className="w-4 h-4 text-gray-600" />
               </Button>
+              {phoneError && <p className="text-red-500 text-sm">{phoneError}</p>}
             </div>
           </div>
         </div>
-        {edit && (
+        {(editName || editEmail || editPhone) && (
           <div className="col-span-1">
             <Button onClick={handleEdit}>SAVE</Button>
           </div>
         )}
       </div>
       <div className="w-1/2 mx-auto">
-      <hr className="mt-9 mb-3"/>
+      <hr className="mt-9 mb-3 border-t-2" style={{ borderColor: 'rgb(78 27 97' }} />
         <div className="flex">
           <Header title="Saved Addresses" className=" mt-9" />
           <div className="mt-6 ml-9">
@@ -158,7 +189,7 @@ const Page = () => {
               <DialogTrigger asChild>
                 <Button onClick={() => setIsDialogOpen(true)}>Add Address</Button>
               </DialogTrigger>
-              <DialogContent className="sm:max-w-[425px] bg-yellow-50">
+              <DialogContent className="sm:max-w-[425px] bg-white">
                 <DialogHeader>
                   <DialogTitle>New Address</DialogTitle>
                   <DialogDescription>
@@ -189,6 +220,8 @@ const Page = () => {
                       className="col-span-3"
                       type="text"
                       placeholder="Your Pincode"
+                      pattern="\d{6}"
+                      maxLength="6"
                     />
                   </div>
                   <div className="grid grid-cols-4 items-center gap-4">
@@ -242,7 +275,7 @@ const Page = () => {
         </div>
         <div className="flex mt-3">
           <RadioGroup defaultValue="primary">
-           <div className="flex space-x-2 mb-2">
+            <div className="flex space-x-2 mb-8">
               <div className="add-1 border">
                 <Label htmlFor="primary" className="w-full h-full">
                   Primary Address
@@ -250,24 +283,23 @@ const Page = () => {
               </div>
               <RadioGroupItem value="primary" id="primary" />
             </div>
-
-            {savedAddress.map((address,index)=>(
-
-            <div key={index} className="flex space-x-2 mb-2">
-              <div className="add-1 border">
-                <Label htmlFor={`option-${index}`} className="w-full h-full">
-                  {`${address.address},${address.city},${address.pincode},${address.state},${address.country}`}
-                </Label>
-              </div>
-              <RadioGroupItem value={`option-${index}`} id={`option-${index}`} />
-               <Button
+            {savedAddress.map((address, index) => (
+              <div key={index} className="flex space-x-2 mb-8 items-center">
+                <div className="add-1 border flex-grow">
+                  <Label htmlFor={`option-${index}`} className="w-full h-full">
+                    {`${address.address}, ${address.city}, ${address.pincode}, ${address.state}, ${address.country}`}
+                  </Label>
+                </div>
+                <RadioGroupItem value={`option-${index}`} id={`option-${index}`} />
+                <Button
                   className="ml-2"
                   onClick={() => handleDeleteAddress(index)}
+                  variant="outline"
                   size="sm"
                 >
-                  <Trash  className="w-4 h-4" />
+                  <Trash className="w-4 h-4" />
                 </Button>
-            </div>
+              </div>
             ))}
           </RadioGroup>
         </div>
