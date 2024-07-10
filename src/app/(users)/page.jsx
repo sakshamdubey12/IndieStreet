@@ -1,5 +1,4 @@
 "use client";
-
 import BannerCarousel from "@/components/user/BannerCarousel";
 import { CarouselSize } from "@/components/user/Categories";
 import ProductDisplay from "@/components/user/ProductDisplay";

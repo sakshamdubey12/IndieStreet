@@ -196,77 +196,78 @@ const Page = () => {
                     Add a New Address And Click Save When Done
                   </DialogDescription>
                 </DialogHeader>
-                <div className="grid gap-4 py-4">
-                  <div className="grid grid-cols-4 items-center gap-4">
-                    <Label htmlFor="address" className="text-right">
-                      Address
+                  <div>
+                    <Label htmlFor="address">
+                      Address*
                     </Label>
                     <Input
                       id="address"
                       value={newAddress.address}
                       onChange={handleAddressChange}
-                      className="col-span-3"
+                      className="h-[70px] mt-1"
                       placeholder="Enter Full Address"
                     />
                   </div>
-                  <div className="grid grid-cols-4 items-center gap-4">
-                    <Label htmlFor="pincode" className="text-right">
-                      Pincode
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="gap-4">
+                    <Label htmlFor="pincode">
+                      Pincode*
                     </Label>
                     <Input
                       id="pincode"
                       value={newAddress.pincode}
                       onChange={handleAddressChange}
-                      className="col-span-3"
+                      className="mt-1"
                       type="text"
                       placeholder="Your Pincode"
                       pattern="\d{6}"
                       maxLength="6"
                     />
                   </div>
-                  <div className="grid grid-cols-4 items-center gap-4">
+                  <div className="gap-4">
                     <Label htmlFor="city" className="text-right">
-                      City
+                      City*
                     </Label>
                     <Input
                       id="city"
                       value={newAddress.city}
                       onChange={handleAddressChange}
-                      className="col-span-3"
+                      className="mt-1"
                       type="text"
                       placeholder="Your City"
                     />
                   </div>
-                  <div className="grid grid-cols-4 items-center gap-4">
+                  <div>
                     <Label htmlFor="state" className="text-right">
-                      State
+                      State*
                     </Label>
                     <Input
                       id="state"
                       value={newAddress.state}
                       onChange={handleAddressChange}
-                      className="col-span-3"
+                      className="mt-1"
                       type="text"
                       placeholder="Your State"
                     />
                   </div>
-                  <div className="grid grid-cols-4 items-center gap-4">
+                  <div>
                     <Label htmlFor="country" className="text-right">
-                      Country
+                      Country*
                     </Label>
                     <Input
                       id="country"
                       value={newAddress.country}
                       onChange={handleAddressChange}
-                      className="col-span-3"
+                      className="mt-1"
                       type="text"
                       placeholder="Your Country"
                     />
                   </div>
+                  
                 </div>
                 <DialogFooter>
                   <Button type="submit" onClick={handleSaveAddress}>
-                    Save changes
+                    Add Address
                   </Button>
                 </DialogFooter>
               </DialogContent>
@@ -275,31 +276,47 @@ const Page = () => {
         </div>
         <div className="flex mt-3">
           <RadioGroup defaultValue="primary">
-            <div className="flex space-x-2 mb-8">
-              <div className="add-1 border">
+            <div className="flex space-x-2 mb-8  border-1 border-b sm:text-sm outline-none p-4">
+              <div className="add-1  flex-grow flex-col">
                 <Label htmlFor="primary" className="w-full h-full">
                   Primary Address
                 </Label>
               </div>
-              <RadioGroupItem value="primary" id="primary" />
+              <RadioGroupItem value="primary" id="primary" className="mt-1"/>
             </div>
             {savedAddress.map((address, index) => (
-              <div key={index} className="flex space-x-2 mb-8 items-center">
-                <div className="add-1 border flex-grow">
+              <div key={index} className="space-x-2 mb-8 items-center border-1 border-b sm:text-sm outline-none p-4">
+                <div className="add-1 flex-grow flex-col">
+                  <div>
                   <Label htmlFor={`option-${index}`} className="w-full h-full">
-                    {`${address.address}, ${address.city}, ${address.pincode}, ${address.state}, ${address.country}`}
+                    {`${address.address}`}
                   </Label>
+                  </div>
+                  <div>
+                  <Label htmlFor={`option-${index}`} className="w-full h-full">
+                    {` ${address.city}, ${address.pincode}`}
+                  </Label>
+                  </div>
+                  <Label htmlFor={`option-${index}`} className="w-full h-full">
+                    {`  ${address.state}, ${address.country}`}
+                  </Label>
+                <RadioGroupItem value={`option-${index}`} id={`option-${index}`} className="ml-4"/>
                 </div>
-                <RadioGroupItem value={`option-${index}`} id={`option-${index}`} />
                 <Button
-                  className="ml-2"
+                  className="text-black border-none relative right-5 top-2"
                   onClick={() => handleDeleteAddress(index)}
-                  variant="outline"
+                  variant="ghostbtn"
                   size="sm"
-                >
+                  >
                   <Trash className="w-4 h-4" />
                 </Button>
-              </div>
+                <Button
+                  className="relative top-4 right-6 transform -translate-y-1/2 bg-transparent p-0 "
+                  size="sm"
+                  >
+                  <Pen className="w-4 h-4 text-gray-600 hover:none" />
+                </Button>
+                  </div>
             ))}
           </RadioGroup>
         </div>
