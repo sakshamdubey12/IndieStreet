@@ -33,7 +33,7 @@ const Page = () => {
     country: ""
   });
   const [isDialogOpen, setIsDialogOpen] = useState(false);
-  const [savedAddress, setSavedAddress]= useState([]);
+  const [savedAddress, setSavedAddress] = useState([]);
 
   const handleEditName = () => {
     setEditName(!editName);
@@ -182,8 +182,8 @@ const Page = () => {
       </div>
       <div className="w-1/2 mx-auto">
       <hr className="mt-9 mb-3 border-t-2" style={{ borderColor: 'rgb(78 27 97' }} />
-        <div className="flex">
-          <Header title="Saved Addresses" className=" mt-9" />
+        <div className="flex flex-wrap">
+          <Header title="Saved Addresses" className="mt-9" />
           <div className="mt-6 ml-9">
             <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
               <DialogTrigger asChild>
@@ -263,7 +263,6 @@ const Page = () => {
                       placeholder="Your Country"
                     />
                   </div>
-                  
                 </div>
                 <DialogFooter>
                   <Button type="submit" onClick={handleSaveAddress}>
@@ -274,50 +273,40 @@ const Page = () => {
             </Dialog>
           </div>
         </div>
-        <div className="flex mt-3">
+        <div className="mt-3">
           <RadioGroup defaultValue="primary">
-            <div className="flex space-x-2 mb-8  border-1 border-b sm:text-sm outline-none p-4">
-              <div className="add-1  flex-grow flex-col">
-                <Label htmlFor="primary" className="w-full h-full">
-                  Primary Address
-                </Label>
-              </div>
-              <RadioGroupItem value="primary" id="primary" className="mt-1"/>
-            </div>
-            {savedAddress.map((address, index) => (
-              <div key={index} className="space-x-2 mb-8 items-center border-1 border-b sm:text-sm outline-none p-4">
-                <div className="add-1 flex-grow flex-col">
-                  <div>
-                  <Label htmlFor={`option-${index}`} className="w-full h-full">
-                    {`${address.address}`}
+            <div className="grid grid-cols-2 gap-4">
+              <div className="flex flex-wrap items-center mb-8 border-2 sm:text-sm p-4">
+                <div className="add-1 flex-grow flex-col w-full">
+                  <Label htmlFor="primary" className="w-full break-words">
+                    Primary Address
                   </Label>
-                  </div>
-                  <div>
-                  <Label htmlFor={`option-${index}`} className="w-full h-full">
-                    {` ${address.city}, ${address.pincode}`}
-                  </Label>
-                  </div>
-                  <Label htmlFor={`option-${index}`} className="w-full h-full">
-                    {`  ${address.state}, ${address.country}`}
-                  </Label>
-                <RadioGroupItem value={`option-${index}`} id={`option-${index}`} className="ml-4"/>
                 </div>
-                <Button
-                  className="text-black border-none relative right-5 top-2"
-                  onClick={() => handleDeleteAddress(index)}
-                  variant="ghostbtn"
-                  size="sm"
-                  >
-                  <Trash className="w-4 h-4" />
-                </Button>
-                <Button
-                  className="relative top-4 right-6 transform -translate-y-1/2 bg-transparent p-0 "
-                  size="sm"
-                  >
-                  <Pen className="w-4 h-4 text-gray-600 hover:none" />
-                </Button>
+                <RadioGroupItem value="primary" id="primary" className="ml-auto" />
+              </div>
+              {savedAddress.map((address, index) => (
+                <div key={index} className="flex flex-wrap items-center mb-8 border-2 sm:text-sm p-5 w-full">
+                  <div className="add-1 flex flex-col w-full">
+                    <div>
+                      <Label htmlFor={`option-${index}`} className="w-full break-words">
+                        {`${address.address}`}
+                      </Label>
+                    </div>
+                    <div>
+                      <Label htmlFor={`option-${index}`} className="w-full break-words">
+                        {`${address.city}, ${address.pincode}`}
+                      </Label>
+                    </div>
+                    <div>
+                      <Label htmlFor={`option-${index}`} className="w-full break-words">
+                        {`${address.state}, ${address.country}`}
+                      </Label>
+                    </div>
                   </div>
-            ))}
+                  <RadioGroupItem value={`option-${index}`} id={`option-${index}`} className="ml-auto" />
+                </div>
+              ))}
+            </div>
           </RadioGroup>
         </div>
       </div>
