@@ -1,42 +1,36 @@
-"use client";
-import Header from "@/components/user/Header";
+"use client"
+import React, { useEffect, useState } from "react";
+import { useSelector, useDispatch } from "react-redux";
+import { useGetProductsByCategoryQuery } from "@/redux/slices/user/GetAllProduct";
+import { setSortBy, setFilters } from "@/redux/slices/user/productFilterSortSlice";
+import { addToCart } from "@/redux/slices/user/cartSlice";
+import { addToWishlist, removeFromWishlist } from "@/redux/slices/user/wishlistSlice";
 import { FilterIcon, SortDescIcon } from "lucide-react";
-import { useEffect, useState } from "react";
+import { FaStar } from "react-icons/fa";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
-  SelectValue,
 } from "@/components/ui/select";
-
 import {
   Sheet,
   SheetContent,
-  SheetDescription,
   SheetHeader,
   SheetTitle,
+  SheetDescription,
   SheetTrigger,
 } from "@/components/ui/sheet";
-
 import {
   Card,
   CardHeader,
   CardFooter,
-  CardTitle,
   CardDescription,
   CardContent,
 } from "@/components/ui/card";
-import { FaStar } from "react-icons/fa";
-import { useSelector, useDispatch } from "react-redux";
-import { useGetProductsByCategoryQuery } from "@/redux/slices/user/GetAllProduct";
-import { setSortBy } from "@/redux/slices/user/productFilterSortSlice";
-import { addToCart } from "@/redux/slices/user/cartSlice";
-import {
-  addToWishlist,
-  removeFromWishlist,
-} from "@/redux/slices/user/wishlistSlice";
+import Header from "@/components/user/Header";
 import ProductCard from "@/components/user/ProductCard";
+import Filter from "@/components/user/Filter";
 
 const Products = ({ params }) => {
   const dispatch = useDispatch();
@@ -60,6 +54,31 @@ const Products = ({ params }) => {
     refetch,
   } = useGetProductsByCategoryQuery();
   const sortBy = useSelector((state) => state.sort.sortBy);
+  const priceRange = useSelector((state) => state.sort.filters.priceRange);
+
+  const [isSheetOpen, setIsSheetOpen] = useState(false);
+  const [selectedFiltersCount, setSelectedFiltersCount] = useState(0);
+  const [savedFilters, setSavedFilters] = useState(null);
+
+  // Load filters from local storage when the component mounts
+  useEffect(() => {
+    const savedFilters = JSON.parse(localStorage.getItem("filters"));
+    console.log(savedFilters)
+    if (savedFilters) {
+      dispatch(setFilters(savedFilters));
+      setSavedFilters(savedFilters);
+      handleFiltersChange(savedFilters);
+    }
+  }, [dispatch]);
+
+  const handleFiltersChange = (filters) => {
+    // Calculate the number of selected filters
+    let count = 0;
+    if (filters && filters.priceRange && (filters.priceRange[0] !== 0 || filters.priceRange[1] !== Infinity)) {
+      count++;
+    }
+    setSelectedFiltersCount(count);
+  };
 
   useEffect(() => {
     setProductName(() => {
@@ -87,6 +106,7 @@ const Products = ({ params }) => {
         return products;
     }
   };
+
   const handleSortChange = (value) => {
     if (
       value === "title-asc" ||
@@ -98,11 +118,23 @@ const Products = ({ params }) => {
     }
   };
 
-  const filterByCategory = (productList) => {
-    const list = productList?.filter((product) => {
+  const handleApplyFilters = (filters) => {
+    dispatch(setFilters(filters));
+    setIsSheetOpen(false); // Close the filter sheet after applying
+  };
+
+  const filterByCategoryAndPrice = (productList) => {
+    let filteredProducts = productList?.filter((product) => {
       return product?.categoryName?.toUpperCase() === productName.toUpperCase();
     });
-    return sortProducts(list);
+
+    if (priceRange) {
+      filteredProducts = filteredProducts?.filter((product) => {
+        return product.price >= priceRange[0] && product.price <= priceRange[1];
+      });
+    }
+
+    return sortProducts(filteredProducts);
   };
 
   const handleAddToCart = (item) => {
@@ -130,24 +162,27 @@ const Products = ({ params }) => {
     setWishlistIDs(ids);
   }, [wishlistItems]);
 
-  console.log(products);
-
   return (
     <section className="px-[5%] md:py-16 sm:py-8 py-5 mx-auto max-w-[100rem]">
       <div className="filter flex items-end justify-between md:mb-4 sm:mb-3 mb-2 border-b-2">
         <Header title={productName} className="block text-end mb-2 pb-0" />
         <div className="selected"></div>
         <div className="innerfilters pb-2 flex items-center">
-          <Sheet>
-            <SheetTrigger className="text-gray-600 py-2 px-2.5 h-10 rounded border bg-gray-200/60 hover:bg-gray-200/60">
-              <FilterIcon className="sm:w-4 w-3.5 sm:h-4 h-3.5" />
+          <Sheet open={isSheetOpen} onOpenChange={setIsSheetOpen}>
+            <SheetTrigger className=" flex text-gray-600 py-2 px-2.5 h-10 rounded border bg-gray-200/60 hover:bg-gray-200/60">
+              <FilterIcon className="sm:w-4 w-3.5 sm:h-4 h-3.5" /> {selectedFiltersCount > 0 && (
+                <span className="relative right-1 -top-2 bg-white text-[#4E1B61] font-medium border rounded-full text-center w-5 h-5 flex justify-center items-center">
+                  {selectedFiltersCount}
+                </span>
+              )}
+              
             </SheetTrigger>
-            <SheetContent className=" bg-white" side="left">
-              <SheetHeader>
-                <SheetTitle>Are you absolutely sure?</SheetTitle>
+            <SheetContent className=" bg-slate-600" side="left">
+              <SheetHeader className="">
+                <SheetTitle className="border-b p-4 text-xl font-semibold mb-4"><h1>Filter Options</h1> </SheetTitle>
                 <SheetDescription>
-                  This action cannot be undone. This will permanently delete
-                  your account and remove your data from our servers.
+                Select your preferences to filter the products.
+                  <Filter onClose={() => setIsSheetOpen(false)} onApplyFilters={handleFiltersChange} />
                 </SheetDescription>
               </SheetHeader>
             </SheetContent>
@@ -187,51 +222,34 @@ const Products = ({ params }) => {
             {Array.from({ length: 5 }).map((_, index) => (
               <Card
                 key={index}
-                className="hover:shadow-[0_0_10px_rgba(78,27,97,0.20)] transition-shadow duration-1000 p-0 rounded overflow-hidden cursor-pointer border m-0 animate-pulse"
+                className="hover:shadow-[0_0_10px_rgba(78,27,97,0.1)] rounded-xl"
               >
-                <CardHeader className="p-0 relative top-0 space-y-0">
-                  <div className="icons absolute top-3 right-3 flex flex-col justify-center items-center">
-                    <div className="py-2.5 px-2.5 rounded-full text-sm bg-gray-300 mb-2"></div>
-                  </div>
-                  <div className="w-full h-56 bg-gray-300 rounded-lg"></div>
-                  <div className="absolute bottom-0 py-2 text-sm bg-gray-300 w-full"></div>
-                </CardHeader>
-                <CardContent className="p-2">
-                  <div className="text-sm mb-2 line-clamp-2 font-normal bg-gray-300 h-6 w-3/4"></div>
-                  <CardDescription className="flex flex-col items-baseline">
-                    <span className="mb-1 flex items-center">
-                      <span className="text-base font-medium text-red-600 mr-1.5 bg-gray-300 h-5 w-10"></span>
-                      <span className="line-through text-sm mr-3 bg-gray-300 h-5 w-10"></span>
-                      <span className="bg-gray-300 h-5 w-10"></span>
-                    </span>
-                    <span className="flex items-center w-full text-sm mb-2">
-                      <span className="flex mr-1.5">
-                        <FaStar className="mr-1 mt-0.5 text-gray-300" />
-                        <span className="font-semibold bg-gray-300 h-6 w-8"></span>
-                      </span>
-                      <span className="block w-1.5 h-1.5 bg-gray-600 rounded-full mr-1.5"></span>
-                      <span className="font-medium underline bg-gray-300 h-6 w-16"></span>
-                    </span>
-                  </CardDescription>
-                  <CardFooter className="flex">
-                    <div className="w-1/2 !text-sm bg-gray-300 h-10 mr-2 py-2.5"></div>
-                    <div className="w-1/2 !text-sm bg-gray-300 h-10 py-2.5"></div>
-                  </CardFooter>
+                <CardHeader className="rounded-xl skeleton"></CardHeader>
+                <CardContent className="grid gap-2 px-6 py-3.5">
+                  <div className="skeleton w-[80%] h-[18px] rounded-md"></div>
+                  <div className="skeleton w-[40%] h-[14px] rounded-md"></div>
                 </CardContent>
+                <CardFooter className="px-6 pt-0 pb-6 flex gap-2">
+                  <div className="skeleton w-[50%] h-[20px] rounded-md"></div>
+                  <div className="skeleton w-[30%] h-[20px] rounded-md"></div>
+                </CardFooter>
               </Card>
             ))}
           </>
         ) : (
-          <>
-            {filterByCategory(products).map((product) => (
-              <div
-                className="card-container sm:scale-100 scale-95"
-                key={product.id}
-              >
-                <ProductCard product={product} />
-              </div>
-            ))}
-          </>
+          filterByCategoryAndPrice(products)?.map((product, index) => {
+            return (
+              <ProductCard
+                product={product}
+                handleAddToCart={handleAddToCart}
+                handleAddToWishlist={handleAddToWishlist}
+                handleRemoveFromWishlist={handleRemoveFromWishlist}
+                handleWishlist={handleWishlist}
+                wishlistIDs={wishlistIDs}
+                key={index}
+              />
+            );
+          })
         )}
       </div>
     </section>

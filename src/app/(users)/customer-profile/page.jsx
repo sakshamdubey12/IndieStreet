@@ -1,5 +1,5 @@
 "use client";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import Header from "@/components/user/Header";
 import { Input } from "@/components/ui/input";
@@ -16,31 +16,59 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
+import { useDispatch } from "react-redux";
+import { logout } from "@/redux/slices/common/authSlice";
+import { useRouter } from "next/navigation";
+
 
 const Page = () => {
   const [editName, setEditName] = useState(false);
   const [editEmail, setEditEmail] = useState(false);
   const [editPhone, setEditPhone] = useState(false);
-  const [name, setName] = useState("Customer Name");
-  const [email, setEmail] = useState("Customer@email.com");
-  const [phone, setPhone] = useState("1234567890");
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
+  const [phone, setPhone] = useState("");
   const [phoneError, setPhoneError] = useState("");
   const [newAddress, setNewAddress] = useState({
     address: "",
     pincode: "",
     city: "",
     state: "",
-    country: ""
+    country: "",
   });
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [savedAddress, setSavedAddress] = useState([]);
+  const [data, setData] = useState(null);
+
+  // const dispatch = useDispatch();
+  // const router = useRouter();
+  // const handleLogout = () => {
+  //   dispatch(logout());
+  //   router.push("/");
+  // };
+
+  useEffect(() => {
+    const storedData = localStorage.getItem('userdata');
+    console.log('Stored Data:', storedData); // Log the raw stored data
+    if (storedData) {
+      const parsedData = JSON.parse(storedData);
+      console.log('Parsed Data:', parsedData); // Log the parsed data
+      setData(parsedData);
+      setName(parsedData.email || ''); // Assuming name and email are the same in this context
+      setEmail(parsedData.email || '');
+      setPhone(parsedData.phoneNumber || ''); // Adjusted key name
+    }
+  }, []);
+  
 
   const handleEditName = () => {
     setEditName(!editName);
   };
+
   const handleEditEmail = () => {
     setEditEmail(!editEmail);
   };
+
   const handleEditPhone = () => {
     setEditPhone(!editPhone);
   };
@@ -60,6 +88,15 @@ const Page = () => {
         setPhoneError("Invalid phone number. Must be 10 digits.");
       }
     }
+    // Save the updated data back to local storage
+    const updatedData = {
+      ...data,
+      name: name,
+      email: email,
+      phone: phone,
+    };
+    console.log("Updated Data:", updatedData); // Debug log
+    localStorage.setItem("userdata", JSON.stringify(updatedData));
   };
 
   const validatePhone = (phone) => {
@@ -92,7 +129,7 @@ const Page = () => {
       pincode: "",
       city: "",
       state: "",
-      country: ""
+      country: "",
     });
     setIsDialogOpen(false);
   };
@@ -111,6 +148,7 @@ const Page = () => {
       </div>
       <div className="personal-detail w-1/2 mx-auto">
         <Header title="Customer Profile" />
+        
         <div className="grid grid-cols-2 gap-6 p-4">
           <div className="col-span-1">
             <Label className="block text-sm font-medium text-gray-700">
@@ -181,7 +219,7 @@ const Page = () => {
         )}
       </div>
       <div className="w-1/2 mx-auto">
-      <hr className="mt-9 mb-3 border-t-2" style={{ borderColor: 'rgb(78 27 97' }} />
+        <hr className="mt-9 mb-3 border-t-2" style={{ borderColor: "rgb(78 27 97" }} />
         <div className="flex flex-wrap">
           <Header title="Saved Addresses" className="mt-9" />
           <div className="mt-6 ml-9">
@@ -196,23 +234,20 @@ const Page = () => {
                     Add a New Address And Click Save When Done
                   </DialogDescription>
                 </DialogHeader>
-                  <div>
-                    <Label htmlFor="address">
-                      Address*
-                    </Label>
-                    <Input
-                      id="address"
-                      value={newAddress.address}
-                      onChange={handleAddressChange}
-                      className="h-[70px] mt-1"
-                      placeholder="Enter Full Address"
-                    />
-                  </div>
+                <div>
+                  <Label htmlFor="address">Address*</Label>
+                  <Input
+                    id="address"
+                    value={newAddress.address}
+                    onChange={handleAddressChange}
+                    className="mt-1"
+                    placeholder="Enter Full Address"
+                    type="text-area"
+                  />
+                </div>
                 <div className="grid grid-cols-2 gap-4">
                   <div className="gap-4">
-                    <Label htmlFor="pincode">
-                      Pincode*
-                    </Label>
+                    <Label htmlFor="pincode">Pincode*</Label>
                     <Input
                       id="pincode"
                       value={newAddress.pincode}
@@ -273,20 +308,21 @@ const Page = () => {
             </Dialog>
           </div>
         </div>
-        <div className="mt-3">
+        <div className="mt-3 mb-5">
           <RadioGroup defaultValue="primary">
             <div className="grid grid-cols-2 gap-4">
-              <div className="flex flex-wrap items-center mb-8 border-2 sm:text-sm p-4">
-                <div className="add-1 flex-grow flex-col w-full">
+              <div className="flex flex-wrap items-center border-2 rounded-sm sm:text-sm p-2">
+                <RadioGroupItem value="primary" id="primary" className="mr-auto" />
+                <div className="add-1 flex-grow flex-col w-full ml-4">
                   <Label htmlFor="primary" className="w-full break-words">
-                    Primary Address
+                    Primary Address Lorem ipsum dolor sit amet consectetur adipisicing elit. Dignissimos, laudantium.
                   </Label>
                 </div>
-                <RadioGroupItem value="primary" id="primary" className="ml-auto" />
               </div>
               {savedAddress.map((address, index) => (
-                <div key={index} className="flex flex-wrap items-center mb-8 border-2 sm:text-sm p-5 w-full">
-                  <div className="add-1 flex flex-col w-full">
+                <div key={index} className="flex flex-wrap items-center border-2 sm:text-sm p-2 w-full">
+                  <RadioGroupItem value={`option-${index}`} id={`option-${index}`} className="mr-auto" />
+                  <div className="add-1 flex flex-col w-full p-2 ml-4">
                     <div>
                       <Label htmlFor={`option-${index}`} className="w-full break-words">
                         {`${address.address}`}
@@ -303,7 +339,6 @@ const Page = () => {
                       </Label>
                     </div>
                   </div>
-                  <RadioGroupItem value={`option-${index}`} id={`option-${index}`} className="ml-auto" />
                 </div>
               ))}
             </div>
